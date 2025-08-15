@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+{% block content %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s infinite'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateY(20px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            }
+                        },
+                        slideUp: {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateY(40px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            }
+                        },
+                        float: {
+                            '0%, 100%': {
+                                transform: 'translateY(0px)'
+                            },
+                            '50%': {
+                                transform: 'translateY(-10px)'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-100 transition-all duration-300"
+         id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        BOOK HAVEN
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#"
+                           class="text-gray-800 hover:text-purple-600 transition-colors duration-200 font-medium">Shop</a>
+                        <a href="#"
+                           class="text-gray-800 hover:text-purple-600 transition-colors duration-200 font-medium">Collections</a>
+                        <a href="#"
+                           class="text-gray-800 hover:text-purple-600 transition-colors duration-200 font-medium">About</a>
+                        <a href="#"
+                           class="text-gray-800 hover:text-purple-600 transition-colors duration-200 font-medium">Contact</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-800 hover:text-purple-600 transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
+                            </path>
+                        </svg>
+                    </button>
+                    <button class="text-gray-800 hover:text-purple-600 transition-colors duration-200 relative">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m2.5-5h8">
+                            </path>
+                        </svg>
+                        <span class="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="relative pt-16 min-h-60 flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900"></div>
+        <div class="absolute inset-0 bg-black/20"></div>
+        <!-- Animated background elements -->
+        <div class="absolute top-20 left-10 w-64 h-64 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float">
+        </div>
+        <div class="absolute bottom-20 right-10 w-72 h-72 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float"
+             style="animation-delay: 1s"></div>
+        <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+            <h1 class="text-5xl md:text-6xl font-bold text-white mb-6 animate-fade-in">Our Book Collection</h1>
+            <p class="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto animate-slide-up"
+               style="animation-delay: 0.3s">Explore our vast collection of books from various genres and authors.</p>
+        </div>
+    </section>
+    <!-- Product Listing Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Featured Books</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Discover our featured books</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Product 1 -->
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="relative bg-gradient-to-br from-purple-200 to-pink-200 h-64 flex items-center justify-center">
+                        <img src="https://via.placeholder.com/150"
+                             alt="Book Cover"
+                             class="w-32 h-48">
+                        <div class="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">SALE</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Bestselling Novel</h3>
+                        <p class="text-gray-600 mb-4">Author: John Doe</p>
+                        <p class="text-gray-600 mb-4">A captivating story of adventure and love.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-lg font-bold text-purple-600">$19.99</span>
+                                <span class="text-sm text-gray-500 line-through">$29.99</span>
+                            </div>
+                            <button class="bg-purple-600 text-white p-2 rounded-full hover:bg-purple-700 transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m2.5-5h8">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="relative bg-gradient-to-br from-blue-200 to-indigo-200 h-64 flex items-center justify-center">
+                        <img src="https://via.placeholder.com/150"
+                             alt="Book Cover"
+                             class="w-32 h-48">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Classic Literature</h3>
+                        <p class="text-gray-600 mb-4">Author: Jane Smith</p>
+                        <p class="text-gray-600 mb-4">Timeless stories that have shaped literature.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-lg font-bold text-blue-600">$14.99</span>
+                            <button class="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m2.5-5h8">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 3 -->
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="relative bg-gradient-to-br from-green-200 to-teal-200 h-64 flex items-center justify-center">
+                        <img src="https://via.placeholder.com/150"
+                             alt="Book Cover"
+                             class="w-32 h-48">
+                        <div class="absolute top-4 right-4 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">NEW</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Children's Favorite</h3>
+                        <p class="text-gray-600 mb-4">Author: Emily White</p>
+                        <p class="text-gray-600 mb-4">A delightful read for young minds.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-lg font-bold text-green-600">$9.99</span>
+                            <button class="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m2.5-5h8">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 4 -->
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="relative bg-gradient-to-br from-orange-200 to-red-200 h-64 flex items-center justify-center">
+                        <img src="https://via.placeholder.com/150"
+                             alt="Book Cover"
+                             class="w-32 h-48">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Science Fiction</h3>
+                        <p class="text-gray-600 mb-4">Author: Michael Brown</p>
+                        <p class="text-gray-600 mb-4">Explore futuristic worlds and advanced technologies.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-lg font-bold text-orange-600">$12.99</span>
+                            <button class="bg-orange-600 text-white p-2 rounded-full hover:bg-orange-700 transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m2.5-5h8">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 5 -->
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="relative bg-gradient-to-br from-yellow-200 to-amber-200 h-64 flex items-center justify-center">
+                        <img src="https://via.placeholder.com/150"
+                             alt="Book Cover"
+                             class="w-32 h-48">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Mystery Thriller</h3>
+                        <p class="text-gray-600 mb-4">Author: Sarah Johnson</p>
+                        <p class="text-gray-600 mb-4">A gripping tale of suspense and intrigue.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-lg font-bold text-yellow-600">$11.99</span>
+                            <button class="bg-yellow-600 text-white p-2 rounded-full hover:bg-yellow-700 transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m2.5-5h8">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 6 -->
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="relative bg-gradient-to-br from-pink-200 to-rose-200 h-64 flex items-center justify-center">
+                        <img src="https://via.placeholder.com/150"
+                             alt="Book Cover"
+                             class="w-32 h-48">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Romance Novel</h3>
+                        <p class="text-gray-600 mb-4">Author: David Wilson</p>
+                        <p class="text-gray-600 mb-4">A heartwarming story of love and relationships.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-lg font-bold text-pink-600">$13.99</span>
+                            <button class="bg-pink-600 text-white p-2 rounded-full hover:bg-pink-700 transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m2.5-5h8">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 7 -->
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="relative bg-gradient-to-br from-indigo-200 to-violet-200 h-64 flex items-center justify-center">
+                        <img src="https://via.placeholder.com/150"
+                             alt="Book Cover"
+                             class="w-32 h-48">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Historical Fiction</h3>
+                        <p class="text-gray-600 mb-4">Author: Lisa Martinez</p>
+                        <p class="text-gray-600 mb-4">A fascinating journey through historical events.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-lg font-bold text-indigo-600">$15.99</span>
+                            <button class="bg-indigo-600 text-white p-2 rounded-full hover:bg-indigo-700 transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m2.5-5h8">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 8 -->
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="relative bg-gradient-to-br from-gray-200 to-gray-300 h-64 flex items-center justify-center">
+                        <img src="https://via.placeholder.com/150"
+                             alt="Book Cover"
+                             class="w-32 h-48">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Self-Help Book</h3>
+                        <p class="text-gray-600 mb-4">Author: Robert Taylor</p>
+                        <p class="text-gray-600 mb-4">Guidance and tips for personal growth and success.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-lg font-bold text-gray-600">$10.99</span>
+                            <button class="bg-gray-600 text-white p-2 rounded-full hover:bg-gray-700 transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m2.5-5h8">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Newsletter -->
+    <section class="py-20 bg-gradient-to-r from-purple-600 to-pink-600">
+        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-white mb-4">Stay Updated</h2>
+            <p class="text-xl text-purple-100 mb-8">Subscribe to our newsletter for exclusive offers and book updates</p>
+            <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                <input type="email"
+                       placeholder="Enter your email"
+                       class="flex-1 px-6 py-4 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-white/30">
+                <button class="bg-white text-purple-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-200 transform hover:scale-105">
+                    Subscribe
+                </button>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
+                        BOOK HAVEN
+                    </div>
+                    <p class="text-gray-400 mb-4">Premium books for every reader.</p>
+                    <div class="flex space-x-4">
+                        <button class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors duration-200">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M20 10C20 4.477 15.523 0 10 0S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z" clip-rule="evenodd">
+                                </path>
+                            </svg>
+                        </button>
+                        <button class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors duration-200">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84">
+                                </path>
+                            </svg>
+                        </button>
+                        <button class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors duration-200">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Shop</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#"
+                               class="text-gray-400 hover:text-white transition-colors duration-200">Fiction</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                               class="text-gray-400 hover:text-white transition-colors duration-200">Non-Fiction</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                               class="text-gray-400 hover:text-white transition-colors duration-200">Children's Books</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                               class="text-gray-400 hover:text-white transition-colors duration-200">Sale</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#"
+                               class="text-gray-400 hover:text-white transition-colors duration-200">Contact Us</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                               class="text-gray-400 hover:text-white transition-colors duration-200">FAQs</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                               class="text-gray-400 hover:text-white transition-colors duration-200">Shipping</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                               class="text-gray-400 hover:text-white transition-colors duration-200">Returns</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400">123 Book Street</li>
+                        <li class="text-gray-400">Book Haven, BH 12345</li>
+                        <li class="text-gray-400">Email: info@bookhaven.com</li>
+                        <li class="text-gray-400">Phone: (123) 456-7890</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+{% endblock content %}

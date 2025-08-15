@@ -1,0 +1,47 @@
+<!-- Navigation -->
+<nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-100 transition-all duration-300"
+     id="navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center">
+                <div class="text-2xl font-bold text-black">
+                    {% comment %} <div class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> {% endcomment %}
+                    {{ request.tenant.name|capfirst }}
+                </div>
+            </div>
+            <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline space-x-8">
+                    <a href="{% url 'shop:products' %}"
+                       class="text-gray-800 hover:text-purple-600 transition-colors duration-200 font-medium">Products</a>
+                    <a href="#"
+                       class="text-gray-800 hover:text-purple-600 transition-colors duration-200 font-medium">Collections</a>
+                    <a href="{% url 'shop:my-orders' %}"
+                       class="text-gray-800 hover:text-purple-600 transition-colors duration-200 font-medium">Order</a>
+                    <a href="#"
+                       class="text-gray-800 hover:text-purple-600 transition-colors duration-200 font-medium">Contact</a>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                {% if not request.customer %}
+                    <a href="{% url 'shop:login' %}"
+                       class="text-gray-800 hover:text-purple-600 transition-colors duration-200">Login</a>
+                {% endif %}
+                {% if request.customer %}
+                    Welcome Back , {{ request.customer.first_name|capfirst }}
+                    <a href='{% url "shop:cart" %}'
+                       class="text-gray-800 hover:text-purple-600 transition-colors duration-200 relative">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m2.5-5h8">
+                            </path>
+                        </svg>
+                        <span hx-trigger="load,cartUpdated from:body"
+                              hx-on="cartUpdated"
+                              hx-swap="None"
+                              hx-get="{% url 'shop:htmx-get-cart' %}"
+                              class="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

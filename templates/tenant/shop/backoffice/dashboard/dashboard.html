@@ -1,0 +1,193 @@
+{% extends "backoffice_base.html" %}
+{% block content %}
+    {% if request.tenant.expired %}
+        <div class="bg-red-50 border-l-4 border-red-400 text-red-800 p-4 m-4 rounded-lg shadow-sm">
+            <p class="text-lg font-medium">
+                {% if request.tenant.on_trial %}
+                    Your trial has expired. Please
+                {% else %}
+                    Your subscription has expired. Please
+                {% endif %}
+                <a class="text-red-500 underline" href="{% url 'backoffice:payment' %}">click here</a>
+                to make a payment to continue using the service.
+            </p>
+        </div>
+    {% else %}
+        <!-- Main Content -->
+        <div class="container mx-auto p-6">
+            <!-- Trial Banner -->
+            {% if request.tenant.on_trial %}
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4 m-4 rounded-lg shadow-sm">
+                    <p class="text-lg font-medium">You're currently on a free trial.</p>
+                    <p class="text-sm">
+                        You have <strong>{{ remaining_days }}</strong> days left. Explore all features and upgrade when you're ready.
+                    </p>
+                </div>
+            {% endif %}
+            <!-- Welcome Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold mb-2">Welcome back, {{ request.user.first_name|capfirst }}!</h1>
+                <p class="text-base-content/70">Here's what's happening with your store today.</p>
+            </div>
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stats shadow">
+                    <div class="stat">
+                        <div class="stat-figure text-primary">
+                            <i class="fas fa-dollar-sign text-2xl"></i>
+                        </div>
+                        <div class="stat-title">Total Revenue</div>
+                        <div class="stat-value text-primary">${{ total_revenue|floatformat:2 }}</div>
+                        <div class="stat-desc">All time</div>
+                    </div>
+                </div>
+                <div class="stats shadow">
+                    <div class="stat">
+                        <div class="stat-figure text-secondary">
+                            <i class="fas fa-shopping-cart text-2xl"></i>
+                        </div>
+                        <div class="stat-title">Total Orders</div>
+                        <div class="stat-value text-secondary">{{ total_orders }}</div>
+                        <div class="stat-desc">{{ paid_orders }} paid</div>
+                    </div>
+                </div>
+                <div class="stats shadow">
+                    <div class="stat">
+                        <div class="stat-figure text-accent">
+                            <i class="fas fa-users text-2xl"></i>
+                        </div>
+                        <div class="stat-title">New Customers</div>
+                        <div class="stat-value text-accent">{{ total_customers }}</div>
+                        <div class="stat-desc">{{ verified_customers }} verified</div>
+                    </div>
+                </div>
+                <div class="stats shadow">
+                    <div class="stat">
+                        <div class="stat-figure text-info">
+                            <i class="fas fa-box text-2xl"></i>
+                        </div>
+                        <div class="stat-title">Products in Stock</div>
+                        <div class="stat-value text-info">{{ products_in_stock }}</div>
+                        <div class="stat-desc">{{ low_stock }} low, {{ out_of_stock }} out</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">Revenue Overview</h2>
+                        <canvas id="revenueChart" height="200"></canvas>
+                    </div>
+                </div>
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">Orders by Status</h2>
+                        <canvas id="ordersChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <!-- Top Products -->
+            <div class="card bg-base-100 shadow-xl mb-8">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Top Products</h2>
+                    {% for product in top_products %}
+                        <div class="flex items-center justify-between mb-4 border-b pb-2 last:border-b-0">
+                            <div class="flex items-center space-x-3">
+                                <div class="avatar">
+                                    <div class="w-12 h-12 rounded bg-primary/10 flex items-center justify-center">
+                                        <i class="fas fa-box text-primary"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">{{ product.product_name_snapshot }}</div>
+                                    <div class="text-sm text-base-content/70">{{ product.category }}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-semibold">${{ product.price|floatformat:2 }}</div>
+                                <div class="text-sm text-base-content/70">{{ product.units_sold }} sold</div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-base-content/70">No products sold yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Recent Orders (Optional: Add if you have recent_orders in context) -->
+            <!-- Omitted for brevity, but can be added similarly -->
+        </div>
+        <!-- JSON Data for JavaScript -->
+        <script id="order-status-labels" type="application/json">{{ order_status_labels|safe }}</script>
+        <script id="order-status-data" type="application/json">{{ order_status_data|safe }}</script>
+        <script id="revenue-labels" type="application/json">{{ revenue_labels|safe }}</script>
+        <script id="revenue-data" type="application/json">{{ revenue_data|safe }}</script>
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- Chart Initialization -->
+        <script>
+            // Orders Chart
+            const ordersCtx = document.getElementById('ordersChart');
+            const orderStatusLabels = JSON.parse(document.getElementById('order-status-labels').textContent);
+            const orderStatusData = JSON.parse(document.getElementById('order-status-data').textContent);
+
+            new Chart(ordersCtx, {
+                type: 'bar',
+                data: {
+                    labels: orderStatusLabels,
+                    datasets: [{
+                        label: 'Orders by Status',
+                        data: orderStatusData,
+                        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart');
+            const revenueLabels = JSON.parse(document.getElementById('revenue-labels').textContent);
+            const revenueData = JSON.parse(document.getElementById('revenue-data').textContent);
+
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: revenueLabels,
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: revenueData,
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+    {% endif %}
+{% endblock content %}

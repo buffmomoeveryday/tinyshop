@@ -1,0 +1,108 @@
+services:
+  tinyshop-postgres:
+    restart: unless-stopped
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - tinyshop_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tinyshop-network
+
+  tinyshop-redis:
+    restart: unless-stopped
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - tinyshop_redis_data:/data
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    networks:
+      - tinyshop-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  tinyshop-web:
+    restart: unless-stopped
+    build:
+      context: .
+    command: [ "uv", "run", "python", "manage.py", "runserver", "0.0.0.0:8000" ]
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - tinyshop_static:/app/staticfiles
+      - tinyshop_media:/app/media
+    depends_on:
+      tinyshop-postgres:
+        condition: service_healthy
+      tinyshop-redis:
+        condition: service_healthy
+    networks:
+      - tinyshop-network
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+
+  tinyshop-celery:
+    restart: unless-stopped
+    build:
+      context: .
+    command: [ "/bin/sh", "-c", "uv run celery -A core worker -l info" ]
+    depends_on:
+      tinyshop-postgres:
+        condition: service_healthy
+      tinyshop-redis:
+        condition: service_healthy
+    networks:
+      - tinyshop-network
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+
+  tinyshop-email:
+    image: axllent/mailpit
+    restart: unless-stopped
+    volumes:
+      - tinyshop_mailpit:/data
+    ports:
+      - "8025:8025" # Web UI
+      - "1025:1025" # SMTP
+    environment:
+      - MP_MAX_MESSAGES=5000
+      - MP_DATABASE=/data/mailpit.db
+      - MP_SMTP_AUTH_ACCEPT_ANY=1
+      - MP_SMTP_AUTH_ALLOW_INSECURE=1
+    networks:
+      - tinyshop-network
+
+volumes:
+  tinyshop_pg_data:
+  tinyshop_redis_data:
+  tinyshop_static:
+  tinyshop_media:
+  tinyshop_mailpit:
+
+networks:
+  tinyshop-network:
+    driver: bridge
+    name: tinyshop-network

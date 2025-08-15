@@ -1,0 +1,182 @@
+{% extends "backoffice_base.html" %}
+{% block content %}
+    <div id="orders" class="template-section">
+        <div class="container mx-auto p-6">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Orders</h1>
+                    <p class="text-base-content/70">Manage customer orders</p>
+                </div>
+                <div class="flex gap-2">
+                    {% if orders %}<button class="btn btn-outline">Export</button>{% endif %}
+                    {% comment %} <button class="btn btn-primary">Create Order</button> {% endcomment %}
+                </div>
+            </div>
+            <!-- Order Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="stats shadow">
+                    <div class="stat">
+                        <div class="stat-title">Total Orders</div>
+                        <div class="stat-value text-primary">{{ stats.total_orders }}</div>
+                        <div class="stat-desc">This month</div>
+                    </div>
+                </div>
+                <div class="stats shadow">
+                    <div class="stat">
+                        <div class="stat-title">Pending</div>
+                        <div class="stat-value text-warning">{{ stats.pending }}</div>
+                        <div class="stat-desc">Awaiting processing</div>
+                    </div>
+                </div>
+                <div class="stats shadow">
+                    <div class="stat">
+                        <div class="stat-title">Shipped</div>
+                        <div class="stat-value text-info">{{ stats.shipped }}</div>
+                        <div class="stat-desc">In transit</div>
+                    </div>
+                </div>
+                <div class="stats shadow">
+                    <div class="stat">
+                        <div class="stat-title">Completed</div>
+                        <div class="stat-value text-success">{{ stats.delivered }}</div>
+                        <div class="stat-desc">Successfully delivered</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Search Form -->
+            <form method="get" class="flex gap-2 mb-4">
+                <input type="text"
+                       name="search"
+                       value="{{ search_query }}"
+                       placeholder="Search orders..."
+                       class="input input-bordered input-sm" />
+                <button type="submit" class="btn btn-primary btn-sm">Search</button>
+            </form>
+            <!-- Orders Table -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="card-title">All Orders</h2>
+                        <div class="flex gap-2">
+                            <select class="select select-bordered select-sm"
+                                    name="status_filter"
+                                    hx-trigger="change"
+                                    hx-post="{% url 'backoffice:orders-tenant' %}"
+                                    hx-target="#orders-table"
+                                    hx-select="#orders-table"
+                                    hx-headers='{"Action": "Filter"}'
+                                    hx-include="this">
+                                >
+                                <option disabled selected>Filter by Status</option>
+                                <option value="">All</option>
+                                {% for value, label in order_status %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="table w-full" id="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Products</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                    <tr class=" {% if order.status == 'pending' %}bg-yellow-100 {% elif order.status == 'processing' %}bg-blue-100 {% elif order.status == 'shipped' %}bg-blue-50 {% elif order.status == 'delivered' %}bg-green-100 {% elif order.status == 'cancelled' %}bg-red-100 {% else %}bg-gray-50 {% endif %} hover:bg-gray-200 transition-colors duration-200 ">
+                                        <td class="font-mono">#ORD-{{ order.pk|stringformat:"03d" }}</td>
+                                        <td>
+                                            <div class="flex items-center space-x-3">
+                                                <div class="avatar">
+                                                    <div class="mask mask-squircle w-12 h-12">
+                                                        {% if order.customer and order.customer.profile.avatar_url %}
+                                                            <img src="{{ order.customer.profile.avatar_url }}" alt="Avatar" />
+                                                        {% else %}
+                                                            <img src="https://via.placeholder.com/48x48/10b981/ffffff?text={{ order.customer.username|default:'G'|first|upper }}"
+                                                                 alt="Avatar" />
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="font-bold">{{ order.customer.get_full_name|default:order.customer.username|default:"Guest" }}</div>
+                                                    <div class="text-sm opacity-50">{{ order.customer.email|default:"No email" }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% for item in order.items.all %}
+                                                {{ item.product.name }}
+                                                {% if not forloop.last %},{% endif %}
+                                            {% empty %}
+                                                No products
+                                            {% endfor %}
+                                        </td>
+                                        <td class="font-bold">${{ order.total_amount }}</td>
+                                        <td>
+                                            <select name="change_status"
+                                                    class="select select-bordered select-sm w-48"
+                                                    hx-post="{% url 'backoffice:orders-tenant' %}"
+                                                    hx-trigger="change"
+                                                    hx-headers='{"Action": "ChangeStatus"}'
+                                                    hx-select="#orders-table"
+                                                    hx-include="this"
+                                                    hx-vals='{"order_id": "{{ order.pk }}"}'
+                                                    hx-target="#orders-table">
+                                                {% for value, label in order_status %}
+                                                    <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>
+                                                        {% if value == "pending" %}
+                                                            ⏳
+                                                        {% elif value == "processing" %}
+                                                            🔄
+                                                        {% elif value == "shipped" %}
+                                                            📦
+                                                        {% elif value == "delivered" %}
+                                                            ✅
+                                                        {% elif value == "cancelled" %}
+                                                            ❌
+                                                        {% else %}
+                                                            ℹ️
+                                                        {% endif %}
+                                                        {{ label }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>{{ order.order_date|date:"Y-m-d" }}</td>
+                                        <td>
+                                            <div class="dropdown dropdown-end">
+                                                <div tabindex="0" role="button" class="btn btn-ghost btn-xs">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </div>
+                                                <ul tabindex="0"
+                                                    class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                                                    <li>
+                                                        <a href="">View Details</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="">Update Status</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="">Send Invoice</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="">Track Shipment</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

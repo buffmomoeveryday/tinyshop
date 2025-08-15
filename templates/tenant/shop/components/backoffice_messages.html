@@ -1,0 +1,9 @@
+<div class="toast toast-end">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info shadow-lg {% if 'success' in message.tags %} alert-success {% elif 'error' in message.tags %} alert-error {% elif 'warning' in message.tags %} alert-warning {% elif 'debug' in message.tags %} alert-info {% endif %}">
+                <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>

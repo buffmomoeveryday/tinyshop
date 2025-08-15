@@ -1,0 +1,174 @@
+{% load unicorn %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="{% static 'toasts.js' %}" defer></script>
+        <title>
+            {% block title %}
+                Shop | {{ request.tenant |upper }}
+            {% endblock title %}
+        </title>
+        {% include "toasts.html" %}
+        {% unicorn_scripts %}
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+        <script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+              rel="stylesheet">
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            'luxe-gold': '#D4AF37',
+                            'luxe-charcoal': '#2D2D2D',
+                            'luxe-cream': '#F8F6F0',
+                            'luxe-gray': '#8B8B8B'
+                        },
+                        animation: {
+                            'fade-in': 'fadeIn 0.8s ease-out',
+                            'slide-up': 'slideUp 0.6s ease-out',
+                            'scale-in': 'scaleIn 0.4s ease-out',
+                            'float': 'float 3s ease-in-out infinite',
+                            'shimmer': 'shimmer 2s linear infinite'
+                        },
+                        keyframes: {
+                            fadeIn: {
+                                '0%': {
+                                    opacity: '0',
+                                    transform: 'translateY(30px)'
+                                },
+                                '100%': {
+                                    opacity: '1',
+                                    transform: 'translateY(0)'
+                                }
+                            },
+                            slideUp: {
+                                '0%': {
+                                    opacity: '0',
+                                    transform: 'translateY(50px)'
+                                },
+                                '100%': {
+                                    opacity: '1',
+                                    transform: 'translateY(0)'
+                                }
+                            },
+                            scaleIn: {
+                                '0%': {
+                                    opacity: '0',
+                                    transform: 'scale(0.9)'
+                                },
+                                '100%': {
+                                    opacity: '1',
+                                    transform: 'scale(1)'
+                                }
+                            },
+                            float: {
+                                '0%, 100%': {
+                                    transform: 'translateY(0px)'
+                                },
+                                '50%': {
+                                    transform: 'translateY(-10px)'
+                                }
+                            },
+                            shimmer: {
+                                '0%': {
+                                    backgroundPosition: '-200% 0'
+                                },
+                                '100%': {
+                                    backgroundPosition: '200% 0'
+                                }
+                            }
+                        },
+                        fontFamily: {
+                            'luxury': ['Playfair Display', 'serif'],
+                            'modern': ['Inter', 'sans-serif']
+                        },
+                        backdropBlur: {
+                            xs: '2px'
+                        }
+                    }
+                }
+            }
+        </script>
+        <style>
+            .glass-effect {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            .gradient-gold {
+                background: linear-gradient(135deg, #D4AF37 0%, #F7DC6F 100%);
+            }
+
+            .text-gradient {
+                background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .hover-lift {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .hover-lift:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            }
+
+            .image-overlay {
+                background: linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, transparent 60%);
+            }
+
+            .luxury-shadow {
+                box-shadow: 0 10px 40px rgba(212, 175, 55, 0.15);
+            }
+        </style>
+        {% block style %}
+        {% endblock style %}
+    </head>
+    <body hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
+        {% include "components/navbar.html" %}
+        {% for message in messages %}{{ message }}{% endfor %}
+        <div class="pt-16">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </body>
+    <script>
+        (function(){
+            function generateUUID(){
+                return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                );
+            }
+
+            let browserId = localStorage.getItem("browser_fingerprint");
+            if (!browserId) {
+                browserId = generateUUID();
+                localStorage.setItem("browser_fingerprint", browserId);
+            }
+
+            function sendHeartbeat(){
+                fetch("{% url 'shop:heartbeat' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ browser_id: browserId }),
+                    credentials: "same-origin"
+                }).catch(err => console.error("Heartbeat failed", err));
+            }
+
+            setInterval(sendHeartbeat, 15000);
+        })();
+    </script>
+    {% block script %}
+    {% endblock script %}
+</html>

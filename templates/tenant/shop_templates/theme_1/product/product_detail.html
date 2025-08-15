@@ -1,0 +1,637 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <title>
+        {% block title %}
+            {{ product.name }} - LUXE
+        {% endblock title %}
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'luxe-gold': '#D4AF37',
+                        'luxe-charcoal': '#2D2D2D',
+                        'luxe-cream': '#F8F6F0',
+                        'luxe-gray': '#8B8B8B'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'scale-in': 'scaleIn 0.4s ease-out',
+                        'float': 'float 3s ease-in-out infinite',
+                        'shimmer': 'shimmer 2s linear infinite'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateY(30px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            }
+                        },
+                        slideUp: {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateY(50px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            }
+                        },
+                        scaleIn: {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'scale(0.9)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'scale(1)'
+                            }
+                        },
+                        float: {
+                            '0%, 100%': {
+                                transform: 'translateY(0px)'
+                            },
+                            '50%': {
+                                transform: 'translateY(-10px)'
+                            }
+                        },
+                        shimmer: {
+                            '0%': {
+                                backgroundPosition: '-200% 0'
+                            },
+                            '100%': {
+                                backgroundPosition: '200% 0'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        'luxury': ['Playfair Display', 'serif'],
+                        'modern': ['Inter', 'sans-serif']
+                    },
+                    backdropBlur: {
+                        xs: '2px'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .gradient-gold {
+            background: linear-gradient(135deg, #D4AF37 0%, #F7DC6F 100%);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-overlay {
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, transparent 60%);
+        }
+
+        .luxury-shadow {
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.15);
+        }
+    </style>
+    <body class="bg-gradient-to-br from-luxe-cream via-white to-gray-50 font-modern">
+        <!-- Enhanced Breadcrumb -->
+        <div class="glass-effect border-b border-gray-200/30 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <nav class="flex animate-fade-in" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-6">
+                        <li>
+                            <a href="{% url 'shop:landing' %}"
+                               class="text-luxe-gray hover:text-luxe-gold transition-all duration-300 font-medium tracking-wide">Home</a>
+                        </li>
+                        <li>
+                            <svg class="w-4 h-4 text-luxe-gold"
+                                 fill="currentColor"
+                                 viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd">
+                                </path>
+                            </svg>
+                        </li>
+                        <li>
+                            <a href="{% url 'shop:products' %}"
+                               class="text-luxe-gray hover:text-luxe-gold transition-all duration-300 font-medium tracking-wide">Collection</a>
+                        </li>
+                        <li>
+                            <svg class="w-4 h-4 text-luxe-gold"
+                                 fill="currentColor"
+                                 viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd">
+                                </path>
+                            </svg>
+                        </li>
+                        <li>
+                            <span class="text-luxe-charcoal font-semibold tracking-wide">{{ product.name }}</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <!-- Enhanced Product Detail -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="lg:grid lg:grid-cols-2 lg:gap-x-16 lg:items-start">
+                <!-- Enhanced Product Images -->
+                <div class="flex flex-col-reverse animate-slide-up">
+                    <!-- Thumbnail Gallery -->
+                    <div class="hidden mt-8 w-full max-w-2xl mx-auto sm:block lg:max-w-none">
+                        <div class="grid grid-cols-4 gap-4">
+                            {% for image in product.images.all %}
+                                <div class="relative rounded-xl overflow-hidden cursor-pointer hover-lift bg-white luxury-shadow">
+                                    <img src="{{ image.image.url }}"
+                                         alt="{{ image.alt_text }}"
+                                         class="w-full h-24 object-center object-cover">
+                                    <div class="absolute inset-0 bg-black opacity-0 hover:opacity-10 transition-opacity duration-300"></div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- Main Image -->
+                    <div class="w-full aspect-square relative overflow-hidden rounded-2xl luxury-shadow">
+                        {% if product.main_image %}
+                            <img src="{{ product.main_image.image.url }}"
+                                 alt="{{ product.name }}"
+                                 class="w-full h-full object-center object-cover hover:scale-105 transition-transform duration-700">
+                        {% else %}
+                            <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                <div class="text-center">
+                                    <svg class="w-20 h-20 text-luxe-gray mx-auto mb-4"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                    <p class="text-luxe-gray font-medium">Image Coming Soon</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <!-- Sale Badge -->
+                        {% if product.is_on_sale %}
+                            <div class="absolute top-6 left-6 animate-float">
+                                <span class="gradient-gold text-white px-4 py-2 rounded-full text-sm font-bold tracking-wide shadow-lg">EXCLUSIVE SALE</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Enhanced Product Info -->
+                <div class="mt-12 px-4 sm:px-0 sm:mt-16 lg:mt-0 animate-fade-in">
+                    <!-- Product Header -->
+                    <div class="mb-8">
+                        <h1 class="text-4xl lg:text-5xl font-luxury font-bold text-luxe-charcoal mb-4 leading-tight">{{ product.name }}</h1>
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="text-3xl font-bold text-luxe-charcoal">${{ product.price }}</div>
+                            {% if product.compare_at_price %}
+                                <div class="text-xl text-luxe-gray line-through">${{ product.compare_at_price }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Enhanced Reviews -->
+                    <div class="mb-8 p-6 glass-effect rounded-xl">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                {% if product.average_rating %}
+                                    <div class="flex items-center">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= product.average_rating %}
+                                                <svg class="text-luxe-gold h-5 w-5 flex-shrink-0"
+                                                     viewBox="0 0 20 20"
+                                                     fill="currentColor">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                </svg>
+                                            {% else %}
+                                                <svg class="text-gray-300 h-5 w-5 flex-shrink-0"
+                                                     viewBox="0 0 20 20"
+                                                     fill="currentColor">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                </svg>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <span class="text-luxe-charcoal font-semibold">{{ product.average_rating }}/5</span>
+                                {% endif %}
+                            </div>
+                            {% if product.average_rating %}
+                                <a href="#"
+                                   class="text-luxe-gold hover:text-yellow-600 font-medium transition-colors duration-300">{{ product.review_count }} Reviews →</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Product Description -->
+                    <div class="mb-10">
+                        <h3 class="text-xl font-luxury font-semibold text-luxe-charcoal mb-4">Description</h3>
+                        <div class="text-luxe-gray leading-relaxed text-lg">
+                            <p>{{ product.description }}</p>
+                        </div>
+                    </div>
+                    <!-- Enhanced Product Options -->
+                    {% include "components/product/add_to_cart.html" with product=product request=request %}
+                    <!-- Product Details -->
+                    <div class="mt-12 p-6 glass-effect rounded-xl">
+                        <h2 class="text-xl font-luxury font-semibold text-luxe-charcoal mb-4">Product Details</h2>
+                        <div class="space-y-3 text-luxe-gray">
+                            <p class="leading-relaxed">{{ product.description }}</p>
+                            <div class="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-gray-200">
+                                <div>
+                                    <span class="font-semibold text-luxe-charcoal">Material:</span>
+                                    <span class="ml-2">Premium Quality</span>
+                                </div>
+                                <div>
+                                    <span class="font-semibold text-luxe-charcoal">Care:</span>
+                                    <span class="ml-2">Professional Clean</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Enhanced Reviews Section -->
+            <section class="mt-24 animate-fade-in">
+                <div class="max-w-4xl mx-auto">
+                    <!-- Review Header -->
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-luxury font-bold text-luxe-charcoal mb-4">Customer Reviews</h2>
+                        <p class="text-luxe-gray text-lg">See what our valued customers have to say</p>
+                    </div>
+                    <!-- Review Statistics -->
+                    <div class="glass-effect rounded-2xl p-8 mb-12">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <!-- Overall Rating -->
+                            <div class="text-center lg:border-r border-gray-200">
+                                <div class="text-5xl font-bold text-luxe-charcoal mb-2">{{ product.average_rating|floatformat:1 }}</div>
+                                <div class="flex items-center justify-center mb-2">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= product.average_rating %}
+                                            <svg class="text-luxe-gold h-6 w-6 flex-shrink-0"
+                                                 viewBox="0 0 20 20"
+                                                 fill="currentColor">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        {% else %}
+                                            <svg class="text-gray-300 h-6 w-6 flex-shrink-0"
+                                                 viewBox="0 0 20 20"
+                                                 fill="currentColor">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <p class="text-luxe-gray">Based on {{ product.review_count }} reviews</p>
+                            </div>
+                            <!-- Rating Breakdown -->
+                            <div class="lg:border-r border-gray-200 lg:px-8">
+                                <h3 class="font-semibold text-luxe-charcoal mb-4">Rating Breakdown</h3>
+                                <div class="space-y-3">
+                                    {% for rating in "54321" %}
+                                        <div class="flex items-center space-x-3">
+                                            <span class="text-sm text-luxe-gray w-2">{{ rating }}</span>
+                                            <svg class="w-4 h-4 text-luxe-gold"
+                                                 viewBox="0 0 20 20"
+                                                 fill="currentColor">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                            <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                                <div class="bg-luxe-gold h-2 rounded-full"
+                                                     style="width: {% if rating == '5' %}75%{% elif rating == '4' %}15%{% elif rating == '3' %}8%{% elif rating == '2' %}2%{% else %}0%{% endif %}">
+                                                </div>
+                                            </div>
+                                            <span class="text-sm text-luxe-gray w-8">
+                                                {% if rating == '5' %}
+                                                    75%
+                                                {% elif rating == '4' %}
+                                                    15%
+                                                {% elif rating == '3' %}
+                                                    8%
+                                                {% elif rating == '2' %}
+                                                    2%
+                                                {% else %}
+                                                    0%
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <!-- Review Highlights -->
+                            <div class="lg:pl-8">
+                                <h3 class="font-semibold text-luxe-charcoal mb-4">Most Mentioned</h3>
+                                <div class="space-y-2">
+                                    <span class="inline-block bg-luxe-gold/10 text-luxe-charcoal px-3 py-1 rounded-full text-sm">Quality</span>
+                                    <span class="inline-block bg-luxe-gold/10 text-luxe-charcoal px-3 py-1 rounded-full text-sm">Comfort</span>
+                                    <span class="inline-block bg-luxe-gold/10 text-luxe-charcoal px-3 py-1 rounded-full text-sm">Style</span>
+                                    <span class="inline-block bg-luxe-gold/10 text-luxe-charcoal px-3 py-1 rounded-full text-sm">Value</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Review Filters -->
+                    <div class="flex flex-wrap items-center justify-between mb-8 gap-4">
+                        <div class="flex items-center space-x-4"></div>
+                        {% if request.customer %}
+                            <button class="gradient-gold text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all duration-300">
+                                Write a Review
+                            </button>
+                        {% else %}
+                            <button disabled
+                                    class="gradient-gold text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all duration-300">
+                                Login to write a Review
+                            </button>
+                        {% endif %}
+                    </div>
+                    <!-- Individual Reviews -->
+                    <div class="space-y-6">
+                        <!-- Sample Review 1 -->
+                        <div class="glass-effect rounded-xl p-6 hover-lift transition-all duration-300">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-luxe-gold to-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                        S
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-luxe-charcoal">Sarah M.</h4>
+                                        <p class="text-sm text-luxe-gray">Verified Buyer</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="flex items-center mb-1">
+                                        {% for i in "12345" %}
+                                            <svg class="text-luxe-gold h-4 w-4 flex-shrink-0"
+                                                 viewBox="0 0 20 20"
+                                                 fill="currentColor">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        {% endfor %}
+                                    </div>
+                                    <p class="text-sm text-luxe-gray">2 weeks ago</p>
+                                </div>
+                            </div>
+                            <h5 class="font-semibold text-luxe-charcoal mb-2">Absolutely love this piece!</h5>
+                            <p class="text-luxe-gray leading-relaxed mb-4">
+                                The quality exceeded my expectations. The craftsmanship is impeccable and the attention to detail is remarkable. It's exactly what I was looking for and fits perfectly with my style. Highly recommend!
+                            </p>
+                            <div class="flex items-center space-x-4 text-sm">
+                                <button class="text-luxe-gold hover:text-yellow-600 transition-colors">👍 Helpful (12)</button>
+                                <button class="text-luxe-gray hover:text-luxe-charcoal transition-colors">Reply</button>
+                            </div>
+                        </div>
+                        <!-- Sample Review 2 -->
+                        <div class="glass-effect rounded-xl p-6 hover-lift transition-all duration-300">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-luxe-charcoal to-gray-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                        M
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-luxe-charcoal">Michael R.</h4>
+                                        <p class="text-sm text-luxe-gray">Verified Buyer</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="flex items-center mb-1">
+                                        {% for i in "1234" %}
+                                            <svg class="text-luxe-gold h-4 w-4 flex-shrink-0"
+                                                 viewBox="0 0 20 20"
+                                                 fill="currentColor">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        {% endfor %}
+                                        <svg class="text-gray-300 h-4 w-4 flex-shrink-0"
+                                             viewBox="0 0 20 20"
+                                             fill="currentColor">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm text-luxe-gray">1 month ago</p>
+                                </div>
+                            </div>
+                            <h5 class="font-semibold text-luxe-charcoal mb-2">Great quality, fast shipping</h5>
+                            <p class="text-luxe-gray leading-relaxed mb-4">
+                                Very pleased with this purchase. The product arrived quickly and was exactly as described. The only reason I'm giving 4 stars instead of 5 is the packaging could be more premium for the price point.
+                            </p>
+                            <div class="flex items-center space-x-4 text-sm">
+                                <button class="text-luxe-gold hover:text-yellow-600 transition-colors">👍 Helpful (8)</button>
+                                <button class="text-luxe-gray hover:text-luxe-charcoal transition-colors">Reply</button>
+                            </div>
+                        </div>
+                        <!-- Sample Review 3 -->
+                        <div class="glass-effect rounded-xl p-6 hover-lift transition-all duration-300">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                        E
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-luxe-charcoal">Emma L.</h4>
+                                        <p class="text-sm text-luxe-gray">Verified Buyer</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="flex items-center mb-1">
+                                        {% for i in "12345" %}
+                                            <svg class="text-luxe-gold h-4 w-4 flex-shrink-0"
+                                                 viewBox="0 0 20 20"
+                                                 fill="currentColor">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        {% endfor %}
+                                    </div>
+                                    <p class="text-sm text-luxe-gray">3 days ago</p>
+                                </div>
+                            </div>
+                            <h5 class="font-semibold text-luxe-charcoal mb-2">Perfect for special occasions</h5>
+                            <p class="text-luxe-gray leading-relaxed mb-4">
+                                This piece is stunning! I wore it to a wedding and received so many compliments. The quality is exceptional and it photographs beautifully. Worth every penny. Will definitely be shopping here again!
+                            </p>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex space-x-2">
+                                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=60&h=60&fit=crop&crop=center"
+                                         alt="Review photo"
+                                         class="w-16 h-16 rounded-lg object-cover">
+                                    <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=60&h=60&fit=crop&crop=center"
+                                         alt="Review photo"
+                                         class="w-16 h-16 rounded-lg object-cover">
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 text-sm">
+                                <button class="text-luxe-gold hover:text-yellow-600 transition-colors">👍 Helpful (15)</button>
+                                <button class="text-luxe-gray hover:text-luxe-charcoal transition-colors">Reply</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Load More Reviews -->
+                    <div class="text-center mt-8">
+                        <button class="border-2 border-luxe-gold text-luxe-gold px-8 py-3 rounded-xl font-semibold hover:bg-luxe-gold hover:text-white transition-all duration-300">
+                            Load More Reviews
+                        </button>
+                    </div>
+                    <!-- Write Review Modal Trigger -->
+                    <div class="glass-effect rounded-2xl p-8 mt-12 text-center">
+                        <h3 class="text-2xl font-luxury font-bold text-luxe-charcoal mb-4">Share Your Experience</h3>
+                        <p class="text-luxe-gray mb-6">Help other customers by sharing your honest review</p>
+                        <button onclick="openReviewModal()"
+                                class="gradient-gold text-white px-8 py-4 rounded-xl font-bold text-lg tracking-wide hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                            Write a Review
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <!-- Review Modal -->
+            <div id="reviewModal"
+                 class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 hidden">
+                <div class="flex items-center justify-center min-h-screen p-4">
+                    <div class="glass-effect rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-luxury font-bold text-luxe-charcoal">Write a Review</h3>
+                            <button onclick="closeReviewModal()"
+                                    class="text-luxe-gray hover:text-luxe-charcoal transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <form class="space-y-6">
+                            <!-- Rating -->
+                            <div>
+                                <label class="block text-luxe-charcoal font-semibold mb-3">Overall Rating</label>
+                                <div class="flex items-center space-x-2">
+                                    <div class="flex items-center space-x-1">
+                                        {% for i in "12345" %}
+                                            <button type="button"
+                                                    class="star-rating text-gray-300 hover:text-luxe-gold transition-colors"
+                                                    data-rating="{{ forloop.counter }}">
+                                                <svg class="w-8 h-8" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                </svg>
+                                            </button>
+                                        {% endfor %}
+                                    </div>
+                                    <span id="ratingText" class="text-luxe-gray ml-2">Click to rate</span>
+                                </div>
+                            </div>
+                            <!-- Review Title -->
+                            <div>
+                                <label class="block text-luxe-charcoal font-semibold mb-3">Review Title</label>
+                                <input type="text"
+                                       placeholder="Summarize your experience..."
+                                       class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-luxe-gold focus:border-transparent">
+                            </div>
+                            <!-- Review Text -->
+                            <div>
+                                <label class="block text-luxe-charcoal font-semibold mb-3">Your Review</label>
+                                <textarea rows="6"
+                                          placeholder="Share your thoughts about this product..."
+                                          class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-luxe-gold focus:border-transparent resize-none"></textarea>
+                            </div>
+                            <!-- Name -->
+                            <div>
+                                <label class="block text-luxe-charcoal font-semibold mb-3">Your Name</label>
+                                <input type="text"
+                                       placeholder="Enter your name..."
+                                       class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-luxe-gold focus:border-transparent">
+                            </div>
+                            <!-- Email -->
+                            <div>
+                                <label class="block text-luxe-charcoal font-semibold mb-3">Email Address</label>
+                                <input type="email"
+                                       placeholder="Enter your email..."
+                                       class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-luxe-gold focus:border-transparent">
+                                <p class="text-sm text-luxe-gray mt-1">Your email will not be published</p>
+                            </div>
+                            <!-- Submit Buttons -->
+                            <div class="flex space-x-4 pt-4">
+                                <button type="submit"
+                                        class="flex-1 gradient-gold text-white py-3 px-6 rounded-lg font-semibold hover:shadow-lg transition-all duration-300">
+                                    Submit Review
+                                </button>
+                                <button type="button"
+                                        onclick="closeReviewModal()"
+                                        class="flex-1 border-2 border-gray-300 text-luxe-charcoal py-3 px-6 rounded-lg font-semibold hover:border-luxe-gold transition-all duration-300">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Enhanced Related Products -->
+            <section class="mt-24 animate-fade-in">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-luxury font-bold text-luxe-charcoal mb-4">You May Also Like</h2>
+                    <p class="text-luxe-gray text-lg">Curated selections from our exclusive collection</p>
+                </div>
+                <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                    {% for related_product in related_products %}
+                        <div class="group hover-lift">
+                            <div class="relative overflow-hidden rounded-2xl luxury-shadow">
+                                <div class="aspect-square">
+                                    {% if related_product.main_image %}
+                                        <img src="{{ related_product.main_image.image.url }}"
+                                             alt="{{ related_product.name }}"
+                                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                    {% else %}
+                                        <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                            <svg class="w-16 h-16 text-luxe-gray"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <!-- Overlay -->
+                                <div class="absolute inset-0 image-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div class="absolute bottom-4 left-4 right-4">
+                                        <a href="{{ related_product.get_absolute_url }}"
+                                           class="w-full bg-white text-luxe-charcoal py-3 px-6 rounded-lg font-semibold text-center block hover:bg-luxe-gold hover:text-white transition-all duration-300">
+                                            Quick View
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- New Badge -->
+                                <div class="absolute top-4 right-4">
+                                    <span class="bg-luxe-gold text-white px-3 py-1 rounded-full text-xs font-bold tracking-wide">NEW</span>
+                                </div>
+                            </div>
+                            <!-- Product Info -->
+                            <div class="mt-6">
+                                <h3 class="font-luxury font-semibold text-luxe-charcoal text-lg mb-2">{{ related_product.name }}</h3>
+                                <p class="text-luxe-gold font-bold text-xl">${{ related_product.price }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </body>
+{% endblock content %}

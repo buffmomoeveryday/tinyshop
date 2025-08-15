@@ -1,0 +1,156 @@
+{% extends "backoffice_base.html" %}
+{% block content %}
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <div class="container mx-auto py-6" u:view>
+        <h1 class="text-3xl font-bold mb-6">{{ product.name }}</h1>
+        <!-- Product Images & Complete Product Information -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+            <!-- Product Images -->
+            <div class="lg:col-span-1">
+                <div class="carousel rounded-box space-x-4">
+                    {% for image in product.images.all %}
+                        <div class="carousel-item">
+                            <img src="{{ image.image.url }}"
+                                 alt="{{ image.alt_text }}"
+                                 class="rounded-lg w-64 h-64 object-cover" />
+                        </div>
+                    {% empty %}
+                        <div class="text-gray-500">No images available.</div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Complete Product Details -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Basic Product Info -->
+                <div class="card bg-base-100 shadow-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4">📦 Product Information</h2>
+                    {% include "backoffice/products/product_info.html" with product=product %}
+                </div>
+                <!-- SEO Information -->
+                <div class="card bg-base-100 shadow-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4">🔍 SEO Information</h2>
+                    <div class="space-y-4">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="form-control">
+                                <label class="label font-semibold">Meta Title</label>
+                                <input type="text"
+                                       value="{{ product.meta_title }}"
+                                       class="input input-bordered w-full"
+                                       readonly />
+                            </div>
+                            <div class="form-control">
+                                <label class="label font-semibold">Keywords</label>
+                                <input type="text"
+                                       value="{{ product.keywords }}"
+                                       class="input input-bordered w-full"
+                                       readonly />
+                            </div>
+                        </div>
+                        <div class="form-control">
+                            <label class="label font-semibold">Meta Description</label>
+                            <textarea class="textarea textarea-bordered w-full" readonly>{{ product.meta_description }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Product Variants Section -->
+        <div class="space-y-6">
+            <!-- Existing Variants -->
+            <div class="card bg-base-100 shadow-lg">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4">🎨 Product Variants</h2>
+                    <div id="variant-table" class="overflow-x-auto">
+                        {% if product.variants.exists %}
+                            {% include 'backoffice/components/variant-table.html' with variants=variants %}
+                        {% else %}
+                            <div class="text-gray-500 text-center py-8">No variants available.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- Add New Variant Form -->
+            <div class="card bg-base-100 shadow-lg">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4">➕ Add New Variant</h2>
+                    <form hx-target="#variant-table"
+                          hx-swap="innerHTML"
+                          hx-post="{% url 'backoffice:htmx_product_add_variant' product.id %}"
+                          method="post"
+                          hx-trigger="submit">
+                        <div class="space-y-6">
+                            <!-- Basic Variant Info -->
+                            <div>
+                                <h3 class="text-lg font-semibold mb-3">Basic Information</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <input class="input input-bordered w-full" name="sku" placeholder="SKU" />
+                                    <input class="input input-bordered w-full"
+                                           name="barcode"
+                                           placeholder="Barcode" />
+                                    <input class="input input-bordered w-full" name="size" placeholder="Size" />
+                                    <input class="input input-bordered w-full"
+                                           name="material"
+                                           placeholder="Material" />
+                                    <input class="input input-bordered w-full"
+                                           name="color"
+                                           placeholder="Color"
+                                           type="color" />
+                                    <div class="form-control flex-row items-center gap-2">
+                                        <label class="label cursor-pointer">
+                                            <span class="label-text">Available</span>
+                                            <input type="checkbox" class="checkbox" name="is_available" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Pricing & Stock -->
+                            <div>
+                                <h3 class="text-lg font-semibold mb-3">Pricing & Stock</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input class="input input-bordered w-full"
+                                           type="number"
+                                           step="0.01"
+                                           name="price_override"
+                                           placeholder="Price Override" />
+                                    <input class="input input-bordered w-full"
+                                           type="number"
+                                           name="stock_quantity"
+                                           placeholder="Stock Quantity" />
+                                </div>
+                            </div>
+                            <!-- Variant Dimensions -->
+                            <div>
+                                <h3 class="text-lg font-semibold mb-3">Variant Dimensions</h3>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <input class="input input-bordered w-full"
+                                           type="number"
+                                           step="0.01"
+                                           name="variant_weight"
+                                           placeholder="Weight" />
+                                    <input class="input input-bordered w-full"
+                                           type="number"
+                                           step="0.01"
+                                           name="variant_length"
+                                           placeholder="Length" />
+                                    <input class="input input-bordered w-full"
+                                           type="number"
+                                           step="0.01"
+                                           name="variant_width"
+                                           placeholder="Width" />
+                                    <input class="input input-bordered w-full"
+                                           type="number"
+                                           step="0.01"
+                                           name="variant_height"
+                                           placeholder="Height" />
+                                </div>
+                            </div>
+                            <div class="pt-4">
+                                <button class="btn btn-primary w-full" type="submit">Add Variant</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

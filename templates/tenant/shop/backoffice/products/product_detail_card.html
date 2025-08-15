@@ -1,0 +1,31 @@
+<!-- Product Info -->
+<div class="card bg-base-100 shadow-lg p-6">
+    <div class="space-y-2">
+        <p>
+            <span class="font-semibold">Category:</span> {{ product.category }}
+        </p>
+        <p>
+            <span class="font-semibold">Brand:</span> {{ product.brand }}
+        </p>
+        <p>
+            <span class="font-semibold">Price:</span> ${{ product.price }}
+        </p>
+        {% if product.compare_at_price %}
+            <p>
+                <span class="font-semibold">Compare At:</span> ${{ product.compare_at_price }}
+            </p>
+        {% endif %}
+        <p>
+            <span class="font-semibold">Available:</span>
+            <span class="badge badge-{{ product.is_available|yesno:'success,error' }}">
+                {{ product.is_available|yesno:"Yes,No" }}
+            </span>
+        </p>
+        <p>
+            <span class="font-semibold">Views:</span> {{ product.views_count }}
+        </p>
+        <p>
+            <span class="font-semibold">Description:</span> {{ product.description }}
+        </p>
+    </div>
+</div>

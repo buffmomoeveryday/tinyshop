@@ -1,0 +1,235 @@
+{% extends "backoffice_base.html" %}
+{% load static %}
+{% block content %}
+    <div class="p-6 space-y-6">
+        <!-- Title & Filters -->
+        <div>
+            <h1 class="text-2xl font-bold mb-4">Customer Events Dashboard</h1>
+            <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="label">
+                        <span class="label-text">Date Range</span>
+                    </label>
+                    <select name="date_range" class="select select-bordered w-full">
+                        <option value="1" {% if filters.date_range == '1' %}selected{% endif %}>Last 24 Hours</option>
+                        <option value="7" {% if filters.date_range == '7' %}selected{% endif %}>Last 7 Days</option>
+                        <option value="30" {% if filters.date_range == '30' %}selected{% endif %}>Last 30 Days</option>
+                        <option value="90" {% if filters.date_range == '90' %}selected{% endif %}>Last 90 Days</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="label">
+                        <span class="label-text">Event Type</span>
+                    </label>
+                    <select name="event_type" class="select select-bordered w-full">
+                        <option value="">All Events</option>
+                        {% for event_type in event_types %}
+                            <option value="{{ event_type }}"
+                                    {% if filters.event_type == event_type %}selected{% endif %}>
+                                {{ event_type|title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="label">
+                        <span class="label-text">Customer</span>
+                    </label>
+                    <select name="customer" class="select select-bordered w-full">
+                        <option value="">All Customers</option>
+                        {% for customer in customers %}
+                            <option value="{{ customer.customer__id }}"
+                                    {% if filters.customer == customer.customer__id|stringformat:"s" %}selected{% endif %}>
+                                {{ customer.customer__email }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex items-end gap-2">
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                    <a href="{% url 'backoffice:reports' %}" class="btn btn-outline">Reset</a>
+                </div>
+            </form>
+        </div>
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="stat bg-base-100 shadow rounded-box">
+                <div class="stat-title">Total Events</div>
+                <div class="stat-value">{{ total_events|default:"0" }}</div>
+            </div>
+            <div class="stat bg-base-100 shadow rounded-box">
+                <div class="stat-title">Unique Customers</div>
+                <div class="stat-value">{{ unique_customers|default:"0" }}</div>
+            </div>
+            <div class="stat bg-base-100 shadow rounded-box">
+                <div class="stat-title">Most Active Event</div>
+                <div class="stat-value">
+                    {% if events_by_type %}
+                        {{ events_by_type.0.event_type|title }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </div>
+            </div>
+            <div class="stat bg-base-100 shadow rounded-box">
+                <div class="stat-title">Events Today</div>
+                <div class="stat-value" id="events-today">
+                    <span class="loading loading-spinner loading-sm"></span>
+                </div>
+            </div>
+        </div>
+        <!-- Charts -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="card bg-base-100 shadow">
+                <div class="card-body">
+                    <h2 class="card-title">Events by Type</h2>
+                    <canvas id="eventsTypeChart"></canvas>
+                </div>
+            </div>
+            <div class="card bg-base-100 shadow">
+                <div class="card-body">
+                    <h2 class="card-title">Events Timeline</h2>
+                    <canvas id="eventsTimelineChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Top Customers & Recent Events -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Top Customers -->
+            <div class="card bg-base-100 shadow">
+                <div class="card-body">
+                    <h2 class="card-title">Top Customers</h2>
+                    {% if top_customers %}
+                        <ul class="space-y-2">
+                            {% for customer in top_customers %}
+                                <li class="flex justify-between">
+                                    <span>{{ customer.customer__email }}</span>
+                                    <span class="badge badge-primary">{{ customer.count }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-gray-500">No customer data available.</p>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Recent Events -->
+            <div class="card bg-base-100 shadow md:col-span-2">
+                <div class="card-body">
+                    <h2 class="card-title">Recent Events</h2>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra w-full">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Event</th>
+                                    <th>Customer</th>
+                                    <th>Path</th>
+                                    <th>IP</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for event in page_obj %}
+                                    <tr>
+                                        <td>{{ event.created_at|date:"M d, H:i" }}</td>
+                                        <td>
+                                            <span class="badge badge-info">{{ event.event_type }}</span>
+                                        </td>
+                                        <td>
+                                            {% if event.customer %}
+                                                {{ event.customer.email }}
+                                            {% else %}
+                                                <span class="text-gray-500">Anonymous</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ event.path|default:"-" }}</td>
+                                        <td>{{ event.ip_address|default:"-" }}</td>
+                                        <td>
+                                            <button class="btn btn-xs btn-outline"
+                                                    onclick="showEventDetails({{ event.id }}, '{{ event.event_type }}', '{{ event.metadata|escapejs }}')">
+                                                View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-gray-500">No events found.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination -->
+                    {% if page_obj.has_other_pages %}
+                        <div class="join mt-4">
+                            {% if page_obj.has_previous %}
+                                <a class="join-item btn"
+                                   href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode }}">Prev</a>
+                            {% endif %}
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <button class="join-item btn btn-active">{{ num }}</button>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <a class="join-item btn"
+                                       href="?page={{ num }}&{{ request.GET.urlencode }}">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <a class="join-item btn"
+                                   href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}">Next</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Chart Data -->
+    {{ events_by_type|json_script:"events-by-type-data" }}
+    {{ events_by_day|json_script:"events-by-day-data" }}
+    <!-- Modal -->
+    <dialog id="eventDetailsModal" class="modal">
+        <div class="modal-box max-w-3xl">
+            <h3 class="font-bold text-lg">Event Details</h3>
+            <div id="eventDetailsContent" class="py-4"></div>
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn">Close</button>
+                </form>
+            </div>
+        </div>
+    </dialog>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+const eventsTypeData = JSON.parse(document.getElementById('events-by-type-data').textContent);
+const eventsTimelineData = JSON.parse(document.getElementById('events-by-day-data').textContent);
+
+new Chart(document.getElementById('eventsTypeChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+        labels: eventsTypeData.map(item => item.event_type),
+        datasets: [{ data: eventsTypeData.map(item => item.count) }]
+    }
+});
+
+new Chart(document.getElementById('eventsTimelineChart').getContext('2d'), {
+    type: 'line',
+    data: {
+        labels: eventsTimelineData.map(item => item.date),
+        datasets: [{ label: 'Events', data: eventsTimelineData.map(item => item.count), fill: true }]
+    }
+});
+
+function showEventDetails(eventId, eventType, metadata) {
+    let html = `<p><strong>ID:</strong> ${eventId}</p><p><strong>Type:</strong> ${eventType}</p>`;
+    try {
+        html += `<pre class="bg-base-200 p-2 rounded">${JSON.stringify(JSON.parse(metadata), null, 2)}</pre>`;
+    } catch {
+        html += `<p>Invalid JSON metadata</p>`;
+    }
+    document.getElementById('eventDetailsContent').innerHTML = html;
+    document.getElementById('eventDetailsModal').showModal();
+}
+    </script>
+{% endblock %}

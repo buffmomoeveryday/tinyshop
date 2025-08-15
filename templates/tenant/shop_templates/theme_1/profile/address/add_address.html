@@ -1,0 +1,121 @@
+<h3 class="text-xl font-semibold mb-4 text-gray-800">Add New Address</h3>
+<form method="post"
+      hx-post="{% url 'shop:profile' %}"
+      hx-swap="outerHTML"
+      class="bg-white shadow rounded-lg p-6 space-y-4">
+    {% csrf_token %}
+    <!-- Address Type -->
+    <div>
+        <label for="address_type" class="block text-gray-700 font-medium mb-1">Address Type:</label>
+        <select name="address_type"
+                id="address_type"
+                required
+                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <option value="billing" {% if address_type == "billing" %}selected{% endif %}>Billing</option>
+            <option value="shipping"
+                    {% if address_type == "shipping" %}selected{% endif %}>Shipping</option>
+            <option value="both" {% if address_type == "both" %}selected{% endif %}>Both Billing & Shipping</option>
+        </select>
+    </div>
+    <!-- Full Name -->
+    <div>
+        <label for="full_name" class="block text-gray-700 font-medium mb-1">Full Name:</label>
+        <input type="text"
+               id="full_name"
+               name="full_name"
+               value="{{ full_name }}"
+               placeholder="Full Name"
+               class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+    <!-- Phone Number -->
+    <div>
+        <label for="phone_number" class="block text-gray-700 font-medium mb-1">Phone Number:</label>
+        <input type="text"
+               id="phone_number"
+               name="phone_number"
+               value="{{ phone_number }}"
+               placeholder="Phone Number"
+               class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+    <!-- Address Line 1 -->
+    <div>
+        <label for="address_line1" class="block text-gray-700 font-medium mb-1">Address Line 1:</label>
+        <input type="text"
+               id="address_line1"
+               name="address_line1"
+               value="{{ address_line1 }}"
+               placeholder="Address Line 1"
+               required
+               class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+    <!-- Address Line 2 -->
+    <div>
+        <label for="address_line2" class="block text-gray-700 font-medium mb-1">Address Line 2:</label>
+        <input type="text"
+               id="address_line2"
+               name="address_line2"
+               value="{{ address_line2 }}"
+               placeholder="Address Line 2"
+               class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+    <!-- City -->
+    <div>
+        <label for="city" class="block text-gray-700 font-medium mb-1">City:</label>
+        <input type="text"
+               id="city"
+               name="city"
+               value="{{ city }}"
+               placeholder="City"
+               required
+               class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+    <!-- State -->
+    <div>
+        <label for="state" class="block text-gray-700 font-medium mb-1">State:</label>
+        <input type="text"
+               id="state"
+               name="state"
+               value="{{ state }}"
+               placeholder="State"
+               required
+               class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+    <!-- Postal Code -->
+    <div>
+        <label for="postal_code" class="block text-gray-700 font-medium mb-1">Postal Code:</label>
+        <input type="text"
+               id="postal_code"
+               name="postal_code"
+               value="{{ postal_code }}"
+               placeholder="Postal Code"
+               required
+               class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+    <!-- Country -->
+    <div>
+        <label for="country" class="block text-gray-700 font-medium mb-1">Country:</label>
+        <input type="text"
+               id="country"
+               name="country"
+               value="{{ country }}"
+               placeholder="Country"
+               required
+               class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+    <!-- Default Address -->
+    <div class="flex items-center space-x-2">
+        <input type="checkbox"
+               name="is_default"
+               id="is_default"
+               {% if is_default %}checked{% endif %}
+               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+        <label for="is_default" class="text-gray-700 font-medium">Set as Default Address</label>
+    </div>
+    <!-- Submit Button -->
+    <div>
+        <button type="submit"
+                class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            Add Address
+        </button>
+    </div>
+</form>

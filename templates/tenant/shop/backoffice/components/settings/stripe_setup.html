@@ -1,0 +1,62 @@
+<form id="form"
+      hx-post="{% url 'backoffice:settings-tenant' %}"
+      hx-trigger="submit"
+      hx-headers='{"Action": "stripe_api_key"}'
+      hx-swap="outerHTML"
+      hx-target="this"
+      hx-select="#form"
+      class="bg-base-100 border border-base-300 rounded-2xl shadow-xl max-w-2xl mx-auto p-8 space-y-6">
+    <!-- Section Header -->
+    <div class="text-center">
+        <h2 class="text-3xl font-extrabold text-primary mb-2">Connect with Stripe</h2>
+        <p class="text-base-content/70 text-base">Securely enter your Stripe Secret Key below</p>
+    </div>
+    <!-- Current Key Display -->
+    <!-- Input Field -->
+    <div>
+        <label for="stripe_public_key"
+               class="block text-sm font-medium text-base-content mb-1">Stripe Secret Key</label>
+        <input type="text"
+               name="stripe_public_key"
+               id="stripe_public_key"
+               placeholder="sk_live_..."
+               class="input input-bordered w-full input-lg"
+               required
+               value="{{ stripe_public_key|default_if_none:'' }}">
+        <br>
+        <input type="text"
+               name="stripe_secret_key"
+               id="stripe_secret_key"
+               placeholder="sk_live_..."
+               class="input input-bordered w-full input-lg"
+               required
+               value="{{ stripe_secret_key|default_if_none:'' }}">
+        <p class="mt-2 text-sm text-base-content/60">
+            You can find your API keys in the Stripe dashboard under Developers → API keys.
+        </p>
+        {% if error %}
+            <p _="on load wait 3s then remove me"
+               id="message"
+               class="text-red-600 bg-red-200 p-4">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+            <p _="on load wait 3s then remove me"
+               id="message"
+               class="text-green-600 bg-green-200 p-4">{{ success }}</p>
+        {% endif %}
+    </div>
+    <!-- Action Button -->
+    <div class="flex justify-center">
+        <button type="submit"
+                class="btn btn-primary btn-lg w-full max-w-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Save API Key
+        </button>
+    </div>
+    <!-- Footer Help Text -->
+    <div class="text-center text-sm text-base-content/60">
+        Your key will be encrypted and stored securely. You can update it anytime.
+    </div>
+</form>

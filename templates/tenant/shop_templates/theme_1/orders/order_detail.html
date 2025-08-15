@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="max-w-5xl mx-auto p-6">
+        <!-- Page Title -->
+        <h1 class="text-2xl font-bold mb-6">Order #{{ order.id }} Details</h1>
+        <!-- Order Summary -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4">Order Summary</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <p>
+                    <span class="font-medium">Customer:</span> {{ order.customer.username|default:"Guest" }}
+                </p>
+                <p>
+                    <span class="font-medium">Order Date:</span> {{ order.order_date|date:"M d, Y H:i" }}
+                </p>
+                <p>
+                    <span class="font-medium">Status:</span>
+                    <span class="px-2 py-1 rounded-full text-white {% if order.status == 'pending' %} bg-yellow-500 {% elif order.status == 'processing' %} bg-blue-500 {% elif order.status == 'shipped' %} bg-indigo-500 {% elif order.status == 'delivered' %} bg-green-500 {% elif order.status == 'cancelled' %} bg-red-500 {% endif %} ">{{ order.status|title }}</span>
+                </p>
+                <p>
+                    <span class="font-medium">Payment Status:</span> {{ order.payment_status|title }}
+                </p>
+                {% if order.transaction_id %}
+                    <p>
+                        <span class="font-medium">Transaction ID:</span> {{ order.transaction_id }}
+                    </p>
+                {% endif %}
+                {% if order.payment_method %}
+                    <p>
+                        <span class="font-medium">Payment Method:</span> {{ order.payment_method }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Shipping & Billing Info -->
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <h2 class="text-lg font-semibold mb-4">Shipping Address</h2>
+                {% if order.shipping_address %}
+                    <p>{{ order.shipping_address.full_name }}</p>
+                    <p>{{ order.shipping_address.street }}</p>
+                    <p>{{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.zip_code }}</p>
+                    <p>{{ order.shipping_address.country }}</p>
+                {% else %}
+                    <p class="text-gray-500 italic">No shipping address provided.</p>
+                {% endif %}
+            </div>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <h2 class="text-lg font-semibold mb-4">Billing Address</h2>
+                {% if order.billing_address %}
+                    <p>{{ order.billing_address.full_name }}</p>
+                    <p>{{ order.billing_address.street }}</p>
+                    <p>{{ order.billing_address.city }}, {{ order.billing_address.state }} {{ order.billing_address.zip_code }}</p>
+                    <p>{{ order.billing_address.country }}</p>
+                {% else %}
+                    <p class="text-gray-500 italic">No billing address provided.</p>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Order Items -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4">Items</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-gray-200 text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 border-b text-left">Product</th>
+                            <th class="px-4 py-2 border-b text-right">Quantity</th>
+                            <th class="px-4 py-2 border-b text-right">Price</th>
+                            <th class="px-4 py-2 border-b text-right">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-2 border-b">
+                                    {{ item.product_name_snapshot }}
+                                    {% if item.variant_details_snapshot %}
+                                        <div class="text-gray-500 text-xs">{{ item.variant_details_snapshot }}</div>
+                                    {% endif %}
+                                </td>
+                                <td class="px-4 py-2 border-b text-right">{{ item.quantity }}</td>
+                                <td class="px-4 py-2 border-b text-right">{{ item.price_at_purchase }}</td>
+                                <td class="px-4 py-2 border-b text-right">{{ item.get_total_price }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="px-4 py-4 text-center text-gray-500">No items in this order.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Totals -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4">Order Totals</h2>
+            <div class="flex justify-between text-sm">
+                <span>Items Total:</span>
+                <span>{{ order.calculate_total_amount|floatformat:2 }}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span>Shipping:</span>
+                <span>{{ order.shipping_cost|floatformat:2 }}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span>Discount:</span>
+                <span>-{{ order.discount_amount|floatformat:2 }}</span>
+            </div>
+            {% if order.refund_amount > 0 %}
+                <div class="flex justify-between text-sm text-red-600">
+                    <span>Refund:</span>
+                    <span>-{{ order.refund_amount|floatformat:2 }}</span>
+                </div>
+            {% endif %}
+            <div class="flex justify-between font-bold text-lg mt-2">
+                <span>Total:</span>
+                <span>{{ order.total_amount|floatformat:2 }}</span>
+            </div>
+        </div>
+        <!-- Tracking -->
+        {% if order.tracking_number %}
+            <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-semibold mb-4">Shipping Tracking</h2>
+                <p>
+                    <span class="font-medium">Carrier:</span> {{ order.shipping_carrier }}
+                </p>
+                <p>
+                    <span class="font-medium">Tracking Number:</span> {{ order.tracking_number }}
+                </p>
+                {% if order.tracking_url %}
+                    <a href="{{ order.tracking_url }}"
+                       target="_blank"
+                       class="text-blue-600 hover:underline">Track Shipment →</a>
+                {% endif %}
+            </div>
+        {% endif %}
+        <!-- Customer Notes -->
+        {% if order.customer_notes %}
+            <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-semibold mb-4">Customer Notes</h2>
+                <p>{{ order.customer_notes }}</p>
+            </div>
+        {% endif %}
+        <!-- Admin Notes -->
+        {% if order.admin_notes %}
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <h2 class="text-lg font-semibold mb-4">Admin Notes</h2>
+                <p class="text-gray-700">{{ order.admin_notes }}</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

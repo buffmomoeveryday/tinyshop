@@ -1,0 +1,21 @@
+{% for msg in chat_messages %}
+    <div class="chat chat-end">
+        <div class="chat-image avatar">
+            <div class="w-10 rounded-full">
+                <img src="https://i.pravatar.cc/40?img=5" alt="User">
+            </div>
+        </div>
+        <div class="chat-bubble bg-secondary text-secondary-content">{{ msg.incomming_message }}</div>
+    </div>
+    <!-- AI message -->
+    <div class="chat chat-start">
+        <div class="chat-image avatar">
+            <div class="w-10 rounded-full">
+                <img src="https://i.pravatar.cc/40?img=3" alt="AI">
+            </div>
+        </div>
+        <div class="chat-bubble bg-primary text-primary-content">{{ msg.explanation|safe }}</div>
+    </div>
+{% empty %}
+    <p class="text-gray-400">No messages yet. Start the conversation!</p>
+{% endfor %}

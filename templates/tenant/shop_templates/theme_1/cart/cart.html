@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <body u:view
+          class="bg-gradient-to-br from-luxe-cream via-white to-gray-50 font-modern">
+        <!-- Breadcrumb -->
+        <div class="glass-effect border-b border-gray-200/30 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <nav class="flex animate-fade-in" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-6">
+                        <li>
+                            <a href="{% url 'shop:landing' %}"
+                               class="text-luxe-gray hover:text-luxe-gold transition-all duration-300 font-medium tracking-wide">Home</a>
+                        </li>
+                        <li>
+                            <svg class="w-4 h-4 text-luxe-gold"
+                                 fill="currentColor"
+                                 viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd">
+                                </path>
+                            </svg>
+                        </li>
+                        <li>
+                            <span class="text-luxe-charcoal font-semibold tracking-wide">Your Shopping Cart</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <!-- Cart Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="lg:grid lg:grid-cols-12 lg:gap-x-12">
+                <!-- Cart Items -->
+                <div class="lg:col-span-8 animate-slide-up">
+                    <div class="glass-effect rounded-2xl p-6 mb-8">
+                        <h1 class="text-3xl font-luxury font-bold text-luxe-charcoal mb-2">Your Shopping Cart</h1>
+                        <p id="cart-count" class="text-luxe-gray">{{ cart.cart_count }} items</p>
+                    </div>
+                    {% include "components/cart/cart_content.html" with cart=cart %}
+                </div>
+                <!-- Cart Summary -->
+                <div class="lg:col-span-4 mt-12 lg:mt-0 animate-fade-in">
+                    <div class="glass-effect rounded-2xl p-6 sticky top-28">
+                        <h2 class="text-2xl font-luxury font-bold text-luxe-charcoal mb-6">Order Summary</h2>
+                        <div class="space-y-4 mb-6">
+                            <div class="flex justify-between items-center">
+                                <span class="text-luxe-gray">Subtotal</span>
+                                <span id="cart-sub-total" class="text-luxe-charcoal font-medium">${{ cart.get_cart_total|floatformat:2 }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-luxe-gray">Shipping</span>
+                                <span class="text-luxe-charcoal font-medium">Calculated at next step</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-luxe-gray">Estimated Tax</span>
+                                <span class="text-luxe-charcoal font-medium">Calculated at next step</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-200 pt-6 mb-6">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xl font-semibold text-luxe-charcoal">Total</span>
+                                <span id="cart-total" class="text-2xl font-bold text-luxe-charcoal">${{ cart.get_cart_total|floatformat:2 }}</span>
+                            </div>
+                            <p class="text-sm text-luxe-gray text-right">USD</p>
+                        </div>
+                        {% if cart.items.all %}
+                            <a href="{% url 'shop:checkout' %}"
+                               class="w-full gradient-gold text-white py-4 px-6 rounded-lg font-semibold text-center block hover:shadow-lg transition-all duration-300 mb-4">
+                                Proceed to Checkout
+                            </a>
+                        {% else %}
+                            <button disabled
+                                    class="w-full bg-gray-300 text-gray-500 py-4 px-6 rounded-lg font-semibold text-center block mb-4 cursor-not-allowed">
+                                Cart is Empty
+                            </button>
+                        {% endif %}
+                        <div class="text-center">
+                            <a href="{% url 'shop:products' %}"
+                               class="text-luxe-gold hover:text-yellow-600 transition-colors font-medium inline-flex items-center">
+                                <svg class="w-4 h-4 mr-2"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                                Continue Shopping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script></script>
+    </body>
+{% endblock content %}

@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <body u:view
+          class="bg-gradient-to-br from-luxe-cream via-white to-gray-50 font-modern">
+        <!-- Breadcrumb -->
+        <div class="glass-effect border-b border-gray-200/30 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <nav class="flex animate-fade-in" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-6">
+                        <li>
+                            <a href="{% url 'shop:landing' %}"
+                               class="text-luxe-gray hover:text-luxe-gold transition-all duration-300 font-medium tracking-wide">Home</a>
+                        </li>
+                        <li>
+                            <svg class="w-4 h-4 text-luxe-gold"
+                                 fill="currentColor"
+                                 viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd">
+                                </path>
+                            </svg>
+                        </li>
+                        <li>
+                            <span class="text-luxe-charcoal font-semibold tracking-wide">Your Orders</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <!-- Orders Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="animate-slide-up">
+                <!-- Page Header -->
+                <div class="glass-effect rounded-2xl p-6 mb-8">
+                    <h1 class="text-3xl font-luxury font-bold text-luxe-charcoal mb-2">Your Orders</h1>
+                    <p class="text-luxe-gray">Track and manage your purchase history</p>
+                </div>
+                <!-- Orders List -->
+                {% if orders %}
+                    <div class="space-y-6">
+                        {% for order in orders %}
+                            <div class="glass-effect rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
+                                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                                    <!-- Order Info -->
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-4 mb-4">
+                                            <h3 class="text-xl font-semibold text-luxe-charcoal">Order #{{ order.id }}</h3>
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {% if order.status == 'completed' %} bg-green-100 text-green-800 {% elif order.status == 'pending' %} bg-yellow-100 text-yellow-800 {% elif order.status == 'processing' %} bg-blue-100 text-blue-800 {% elif order.status == 'cancelled' %} bg-red-100 text-red-800 {% else %} bg-gray-100 text-gray-800 {% endif %}">
+                                                {% if order.status %}
+                                                    {{ order.status|capfirst }}
+                                                {% else %}
+                                                    Processing
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                            <div>
+                                                <span class="text-luxe-gray">Order Date:</span>
+                                                <p class="text-luxe-charcoal font-medium">
+                                                    {% if order.created_at %}
+                                                        {{ order.created_at|date:"M d, Y" }}
+                                                    {% else %}
+                                                        N/A
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <span class="text-luxe-gray">Total Amount:</span>
+                                                <p class="text-luxe-charcoal font-medium">
+                                                    {% if order.total %}
+                                                        ${{ order.total|floatformat:2 }}
+                                                    {% else %}
+                                                        N/A
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <span class="text-luxe-gray">Payment Method:</span>
+                                                <p class="text-luxe-charcoal font-medium">
+                                                    {% if order.payment_method %}
+                                                        {{ order.payment_method }}
+                                                    {% else %}
+                                                        Card
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Order Actions -->
+                                    <div class="mt-6 lg:mt-0 lg:ml-6 flex flex-col sm:flex-row gap-3">
+                                        <a href="{% url 'shop:order-detail' order.id %}"
+                                           class="inline-flex items-center justify-center px-4 py-2 border border-luxe-gold text-luxe-gold hover:bg-luxe-gold transition-all duration-300 rounded-lg font-medium">
+                                            <svg class="w-4 h-4 mr-2"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                                </path>
+                                            </svg>
+                                            View Details
+                                        </a>
+                                        {% if order.status != 'cancelled' and order.status != 'completed' and order.status != 'shipped' %}
+                                            <form action="{% url 'shop:cancel-order' order.id %}" method="post">
+                                                {% csrf_token %}
+                                                <button class="inline-flex items-center justify-center px-4 py-2 border border-red-300 text-red-600 hover:bg-red-50 transition-all duration-300 rounded-lg font-medium"
+                                                        type="submit">
+                                                    <svg class="w-4 h-4 mr-2"
+                                                         fill="none"
+                                                         stroke="currentColor"
+                                                         viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                    Cancel Order
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <!-- Empty State -->
+                    <div class="glass-effect rounded-2xl p-12 text-center">
+                        <div class="mx-auto w-24 h-24 bg-luxe-gold/10 rounded-full flex items-center justify-center mb-6">
+                            <svg class="w-12 h-12 text-luxe-gold"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-luxury font-bold text-luxe-charcoal mb-4">No Orders Yet</h3>
+                        <p class="text-luxe-gray mb-8 max-w-md mx-auto">
+                            You haven't placed any orders yet. Start shopping to see your order history here.
+                        </p>
+                        <a href="{% url 'shop:products' %}"
+                           class="inline-flex items-center gradient-gold text-white py-3 px-6 rounded-lg font-semibold hover:shadow-lg transition-all duration-300">
+                            <svg class="w-5 h-5 mr-2"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z">
+                                </path>
+                            </svg>
+                            Start Shopping
+                        </a>
+                    </div>
+                {% endif %}
+                <!-- Back to Shopping -->
+                <div class="mt-12 text-center">
+                    <a href="{% url 'shop:products' %}"
+                       class="text-luxe-gold hover:text-yellow-600 transition-colors font-medium inline-flex items-center">
+                        <svg class="w-4 h-4 mr-2"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                        </svg>
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </body>
+{% endblock content %}

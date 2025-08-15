@@ -1,0 +1,3 @@
+<select name="category_id" class="select select-bordered w-full">
+    {% for cat in categories %}<option value="{{ cat.id }}">{{ cat.name }}</option>{% endfor %}
+</select>

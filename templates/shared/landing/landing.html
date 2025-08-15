@@ -1,0 +1,462 @@
+{% extends "base.html" %}
+{% block title %}
+    Tiny Shop
+{% endblock title %}
+{% block content %}
+    <div>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: {
+                                500: '#667eea',
+                                600: '#5a67d8',
+                                700: '#4c51bf'
+                            },
+                            secondary: {
+                                500: '#764ba2',
+                                600: '#6b46c1'
+                            }
+                        },
+                        animation: {
+                            'gradient-shift': 'gradientShift 15s ease infinite',
+                            'gradient-text': 'gradientText 8s ease infinite',
+                            'fade-in-up': 'fadeInUp 1s ease-out',
+                            'bounce-slow': 'bounce 2s infinite',
+                            'float': 'float 20s infinite linear',
+                            'ripple': 'ripple 0.6s linear'
+                        },
+                        keyframes: {
+                            gradientShift: {
+                                '0%': {
+                                    'background-position': '0% 50%'
+                                },
+                                '50%': {
+                                    'background-position': '100% 50%'
+                                },
+                                '100%': {
+                                    'background-position': '0% 50%'
+                                }
+                            },
+                            gradientText: {
+                                '0%, 100%': {
+                                    'background-position': '0% 50%'
+                                },
+                                '50%': {
+                                    'background-position': '100% 50%'
+                                }
+                            },
+                            fadeInUp: {
+                                'from': {
+                                    opacity: '0',
+                                    transform: 'translateY(50px)'
+                                },
+                                'to': {
+                                    opacity: '1',
+                                    transform: 'translateY(0)'
+                                }
+                            },
+                            float: {
+                                '0%': {
+                                    transform: 'translateY(100vh) rotate(0deg)'
+                                },
+                                '100%': {
+                                    transform: 'translateY(-100px) rotate(360deg)'
+                                }
+                            },
+                            ripple: {
+                                'to': {
+                                    transform: 'scale(4)',
+                                    opacity: '0'
+                                }
+                            }
+                        },
+                        backdropBlur: {
+                            'xl': '20px'
+                        }
+                    }
+                }
+            }
+        </script>
+        <style>
+            .gradient-bg {
+                background: linear-gradient(135deg, #0f0f0f 0%, #000000 100%);
+                background-size: 400% 400%;
+            }
+
+            .gradient-text {
+                background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+                background-size: 300% 300%;
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .glass {
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .btn-shimmer::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                transition: left 0.5s;
+            }
+
+            .btn-shimmer:hover::before {
+                left: 100%;
+            }
+
+            .reveal {
+                opacity: 0;
+                transform: translateY(50px);
+                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .reveal.active {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            /* General body and section backgrounds */
+            body {
+                background-color: #000;
+                color: white;
+                overflow-x: hidden;
+            }
+
+            section {
+                background-color: #000;
+            }
+
+            /* Optional: override light grays in paragraphs */
+            p,
+            .text-gray-300,
+            .text-gray-200 {
+                color: #ccc !important;
+            }
+
+            /* Optional: give glass cards a darker tone */
+            .glass:hover {
+                background: rgba(255, 255, 255, 0.08);
+            }
+        </style>
+    </head>
+    <body class="bg-black text-white overflow-x-hidden">
+        <!-- Hero Section -->
+        <section class="min-h-screen flex items-center justify-center relative overflow-hidden gradient-bg animate-gradient-shift">
+            <canvas class="absolute inset-0 w-full h-full" id="heroCanvas"></canvas>
+            <!-- Floating Elements -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div class="absolute bg-white/10 rounded-full animate-float"
+                     style="left: 10%;
+                            width: 8px;
+                            height: 8px;
+                            animation-delay: 0s"></div>
+                <div class="absolute bg-white/10 rounded-full animate-float"
+                     style="left: 20%;
+                            width: 12px;
+                            height: 12px;
+                            animation-delay: 2s"></div>
+                <div class="absolute bg-white/10 rounded-full animate-float"
+                     style="left: 35%;
+                            width: 6px;
+                            height: 6px;
+                            animation-delay: 4s"></div>
+                <div class="absolute bg-white/10 rounded-full animate-float"
+                     style="left: 50%;
+                            width: 10px;
+                            height: 10px;
+                            animation-delay: 6s"></div>
+                <div class="absolute bg-white/10 rounded-full animate-float"
+                     style="left: 65%;
+                            width: 8px;
+                            height: 8px;
+                            animation-delay: 8s"></div>
+                <div class="absolute bg-white/10 rounded-full animate-float"
+                     style="left: 80%;
+                            width: 14px;
+                            height: 14px;
+                            animation-delay: 10s"></div>
+                <div class="absolute bg-white/10 rounded-full animate-float"
+                     style="left: 90%;
+                            width: 6px;
+                            height: 6px;
+                            animation-delay: 12s"></div>
+            </div>
+            <div class="text-center max-w-4xl px-8 relative z-10 animate-fade-in-up">
+                <h1 class="text-6xl md:text-8xl font-black mb-8 gradient-text animate-gradient-text">
+                    Launch Your Online Store Today
+                </h1>
+                <p class="text-xl md:text-2xl mb-12 opacity-90 max-w-3xl mx-auto">
+                    Everything you need to sell online, backed by powerful tools and beautiful themes that convert visitors into customers.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                    <a href="{% url 'register' %}"
+                       class="group relative overflow-hidden bg-gradient-to-r from-primary-500 to-secondary-500 px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary-500/30 btn-shimmer flex items-center justify-center gap-2">
+                        <span class="text-2xl">🚀</span>
+                        Get Started Free
+                    </a>
+                    <button class="group relative overflow-hidden bg-transparent border-2 border-white/30 backdrop-blur-md px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:border-white/50 btn-shimmer flex items-center justify-center gap-2">
+                        <span class="text-2xl">👀</span>
+                        See Demo
+                    </button>
+                </div>
+            </div>
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce-slow text-white/60 text-4xl">↓</div>
+        </section>
+        <!-- Features Section -->
+        <section class="py-32 px-8">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-5xl md:text-6xl font-bold text-center mb-16 gradient-text reveal">Why Choose Our Platform?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {% comment %} <div class="group p-8 rounded-3xl glass transition-all duration-500 hover:-translate-y-4 hover:shadow-2xl hover:shadow-primary-500/20 cursor-pointer reveal">
+                        <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                            🎨
+                        </div>
+                        <h3 class="text-2xl font-semibold mb-4 text-white">Drag & Drop Builder</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            Create stunning stores visually with our intuitive builder. No coding skills required - just drag, drop, and customize to your heart's content.
+                        </p>
+                    </div> {% endcomment %}
+                    <div class="group p-8 rounded-3xl glass transition-all duration-500 hover:-translate-y-4 hover:shadow-2xl hover:shadow-primary-500/20 cursor-pointer reveal">
+                        <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                            💳
+                        </div>
+                        <h3 class="text-2xl font-semibold mb-4 text-white">Integrated Payments</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            Accept payments from anywhere in the world with ease. Support for all major payment methods and instant payouts to your account.
+                        </p>
+                    </div>
+                    <div class="group p-8 rounded-3xl glass transition-all duration-500 hover:-translate-y-4 hover:shadow-2xl hover:shadow-primary-500/20 cursor-pointer reveal">
+                        <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                            📱
+                        </div>
+                        <h3 class="text-2xl font-semibold mb-4 text-white">Mobile Optimized</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            Your store will look amazing on any device automatically. Responsive design ensures perfect display on phones, tablets, and desktops.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Testimonials Section -->
+        <section class="py-32 px-8 bg-gradient-to-br from-gray-900 to-black">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-5xl md:text-6xl font-bold text-center mb-16 gradient-text reveal">What Our Users Say</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="p-8 rounded-3xl glass transition-all duration-300 hover:-translate-y-2 hover:bg-white/10 reveal">
+                        <p class="text-lg leading-relaxed mb-6 italic text-gray-200">
+                            "This platform helped me launch my business in days, not months. The interface is incredibly intuitive and the results speak for themselves!"
+                        </p>
+                        <div class="font-semibold text-cyan-400">— Alex R., Founder of CraftGoods</div>
+                    </div>
+                    <div class="p-8 rounded-3xl glass transition-all duration-300 hover:-translate-y-2 hover:bg-white/10 reveal">
+                        <p class="text-lg leading-relaxed mb-6 italic text-gray-200">
+                            "Way better than anything else I tried. The design flexibility is unmatched and my conversion rates have never been higher."
+                        </p>
+                        <div class="font-semibold text-cyan-400">— Maria L., Owner of LuxeStyle</div>
+                    </div>
+                    <div class="p-8 rounded-3xl glass transition-all duration-300 hover:-translate-y-2 hover:bg-white/10 reveal">
+                        <p class="text-lg leading-relaxed mb-6 italic text-gray-200">
+                            "Support is amazing and the features just keep getting better. It's like having a whole development team at your fingertips."
+                        </p>
+                        <div class="font-semibold text-cyan-400">— Jordan P., CEO of TechEase</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Call to Action -->
+        <section class="py-32 px-8 relative overflow-hidden gradient-bg animate-gradient-shift">
+            <!-- Grain Pattern -->
+            <div class="absolute inset-0 opacity-10"
+                 style="background-image: url('data:image/svg+xml,<svg xmlns=&quot;
+                        http://www.w3.org/2000/svg&quot;
+                        viewBox=&quot;
+                        0 0 100 100&quot;
+                        ><defs><pattern id=&quot;
+                        grain&quot;
+                        width=&quot;
+                        100&quot;
+                        height=&quot;
+                        100&quot;
+                        patternUnits=&quot;
+                        userSpaceOnUse&quot;
+                        ><circle cx=&quot;
+                        25&quot;
+                        cy=&quot;
+                        25&quot;
+                        r=&quot;
+                        1&quot;
+                        fill=&quot;
+                        white&quot;
+                        opacity=&quot;
+                        0.1&quot;
+                        /><circle cx=&quot;
+                        75&quot;
+                        cy=&quot;
+                        75&quot;
+                        r=&quot;
+                        1&quot;
+                        fill=&quot;
+                        white&quot;
+                        opacity=&quot;
+                        0.1&quot;
+                        /><circle cx=&quot;
+                        50&quot;
+                        cy=&quot;
+                        10&quot;
+                        r=&quot;
+                        1&quot;
+                        fill=&quot;
+                        white&quot;
+                        opacity=&quot;
+                        0.1&quot;
+                        /><circle cx=&quot;
+                        10&quot;
+                        cy=&quot;
+                        60&quot;
+                        r=&quot;
+                        1&quot;
+                        fill=&quot;
+                        white&quot;
+                        opacity=&quot;
+                        0.1&quot;
+                        /><circle cx=&quot;
+                        90&quot;
+                        cy=&quot;
+                        40&quot;
+                        r=&quot;
+                        1&quot;
+                        fill=&quot;
+                        white&quot;
+                        opacity=&quot;
+                        0.1&quot;
+                        /></pattern></defs><rect width=&quot;
+                        100&quot;
+                        height=&quot;
+                        100&quot;
+                        fill=&quot;
+                        url(%23grain)&quot;
+                        /></svg>')"></div>
+            <div class="text-center relative z-10">
+                <h2 class="text-5xl md:text-7xl font-bold mb-6 reveal">Start Selling Online in Minutes</h2>
+                <p class="text-xl md:text-2xl mb-12 opacity-90 max-w-3xl mx-auto reveal">
+                    Join thousands of entrepreneurs who trust our platform to grow their business and achieve their dreams.
+                </p>
+                <button class="group relative overflow-hidden bg-white text-primary-600 px-12 py-5 rounded-full text-xl font-bold transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-white/30 btn-shimmer reveal flex items-center justify-center gap-3 mx-auto">
+                    <span class="text-2xl">✨</span>
+                    Create Your Store Now
+                </button>
+            </div>
+        </section>
+        <script>
+            // Three.js background animation
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById('heroCanvas'),
+                alpha: true
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Create particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 100;
+            const posArray = new Float32Array(particlesCount * 3);
+
+            for (let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 20;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.05,
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+
+            camera.position.z = 5;
+
+            let mouseX = 0;
+            let mouseY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                particlesMesh.rotation.x += 0.001;
+                particlesMesh.rotation.y += 0.001;
+
+                particlesMesh.rotation.x += mouseY * 0.00005;
+                particlesMesh.rotation.y += mouseX * 0.00005;
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            document.querySelectorAll('.reveal').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Button ripple effect
+            document.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const ripple = document.createElement('span');
+                    const rect = btn.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+
+                    ripple.className = 'absolute rounded-full bg-white/30 pointer-events-none animate-ripple';
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.style.transform = 'scale(0)';
+
+                    btn.appendChild(ripple);
+
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        </script>
+    </body>
+</div>
+{% endblock content %}

@@ -1,0 +1,11 @@
+{% extends "backoffice_base.html" %}
+{% block content %}
+    <div class="bg-gradient-to-br from-base-100 to-base-200 p-6">
+        <div class="max-w-7xl mx-auto">
+            {% include "backoffice/components/settings/template_selection.html" with selected_tempalte=selected_tempalte  shop_templates=shop_templates %}
+        </div>
+        <div class="max-w-7xl mx-auto">
+            {% include "backoffice/components/settings/stripe_setup.html" with selected_tempalte=selected_tempalte %}
+        </div>
+    </div>
+{% endblock content %}

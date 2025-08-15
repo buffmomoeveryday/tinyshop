@@ -1,0 +1,31 @@
+Welcome to TinyShop, {{employee.first_name}}!
+    
+Congratulations! Your online store is now live and ready for business.
+
+STORE DETAILS:
+- Store Name: {{tenant.name}}
+- Store URL: {{tenant.domain_url}}
+- Owner: {{employee.first_name}} {{employee.last_name}}
+- Email: {{employee.email}}
+- Username: {{employee.username}}
+
+FREE TRIAL:
+You have a 7-day free trial that expires on {{tenant.trial_expire_date}}.
+Enjoy full access to all TinyShop features!
+
+NEXT STEPS:
+1. Visit your store: {{tenant.domain_url}}
+2. Access your dashboard: {{tenant.domain_url}}/admin
+3. Complete your store setup
+4. Add your first products
+5. Configure payment and shipping options
+
+NEED HELP?
+- Email: support@tinyshop.com
+- Phone: 1-800-TINY-SHOP
+- Help Center: help.tinyshop.com
+
+Thank you for choosing TinyShop! We're here to help you succeed.
+
+Best regards,
+The TinyShop Team

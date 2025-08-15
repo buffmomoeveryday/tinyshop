@@ -1,0 +1,91 @@
+{% extends "backoffice_base.html" %}
+{% block content %}
+    <div id="products" class="template-section" u:view>
+        {% if request.tenant.trial_expire %}
+            <div class="alert alert-error shadow-lg mt-8 mx-4">
+                <span>Your trial has expired. Please upgrade to continue managing products.</span>
+            </div>
+        {% else %}
+            <div class="container mx-auto px-4 py-6">
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-3xl font-bold">Products</h1>
+                        <p class="text-base-content/70">Manage your product catalog</p>
+                    </div>
+                    <a href="{% url 'backoffice:product-add-tenant' %}"
+                       class="btn btn-primary">
+                        <i class="fas fa-plus mr-2"></i>Add Product
+                    </a>
+                </div>
+                <!-- Filters -->
+                <div class="card bg-base-100 shadow mb-6">
+                    <div class="card-body">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Search</span>
+                                </label>
+                                <input u:model="search_product_name"
+                                       u:change="search"
+                                       type="text"
+                                       placeholder="Search products..."
+                                       class="input input-bordered w-full" />
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Category</span>
+                                </label>
+                                <select>
+                                    <option disabled selected>All Categories</option>
+                                    {% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Status</span>
+                                </label>
+                                <select u:model="search_status"
+                                        u:change="search"
+                                        class="select select-bordered w-full">
+                                    <option disabled selected>All Status</option>
+                                    <option value="true">Active</option>
+                                    <option value="false">Disabled</option>
+                                </select>
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Sort By</span>
+                                </label>
+                                <select u:model="sort_by"
+                                        u:change="search"
+                                        class="select select-bordered w-full">
+                                    <option disabled selected>Name</option>
+                                    <option>Price</option>
+                                    <option>Date Created</option>
+                                    <option>Stock</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Products Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {% include 'backoffice/components/product_list.html' with products=products %}
+                </div>
+                <!-- Pagination -->
+                {% if products %}
+                    <div class="flex justify-center mt-10">
+                        <div class="join">
+                            <button class="join-item btn">«</button>
+                            <button class="join-item btn btn-active">1</button>
+                            <button class="join-item btn">2</button>
+                            <button class="join-item btn">3</button>
+                            <button class="join-item btn">»</button>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

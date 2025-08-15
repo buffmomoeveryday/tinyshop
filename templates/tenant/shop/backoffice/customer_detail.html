@@ -1,0 +1,9 @@
+{% extends "backoffice_base.html" %}
+{% block content %}
+    <div u:view>
+        {% if customer %}
+        {% else %}
+            <h1 class="text-3xl text-center min-h-screen text-red-600">No Customer Matching the query exists</h1>
+        {% endif %}
+    </div>
+{% endblock content %}

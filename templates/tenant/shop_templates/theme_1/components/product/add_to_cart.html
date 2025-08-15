@@ -1,0 +1,136 @@
+<form class="space-y-8"
+      hx-swap="outerHTML"
+      hx-post="{% url 'shop:htmx-add-to-cart' product.id %}">
+    <!-- Hidden input for variant ID -->
+    <input type="hidden" name="variant_id" id="variant-id-input">
+    <!-- Colors -->
+    {% if product.variants.all %}
+        <div class="p-6 glass-effect rounded-xl">
+            <h3 class="text-lg font-semibold text-luxe-charcoal mb-4">Available Colors</h3>
+            <fieldset>
+                <div class="flex items-center space-x-4">
+                    {% for variant in product.variants.all %}
+                        {% if variant.color %}
+                            <label class="relative group cursor-pointer">
+                                <input type="radio"
+                                       name="color-choice"
+                                       value="{{ variant.color }}"
+                                       data-color="{{ variant.color }}"
+                                       data-size="{{ variant.size }}"
+                                       data-variant-id="{{ variant.id }}"
+                                       class="sr-only color-input">
+                                <div class="w-12 h-12 rounded-full border-2 border-gray-300 group-hover:border-luxe-gold transition-all duration-300 shadow-lg hover:shadow-xl transform group-hover:scale-110"
+                                     style="background-color: {{ variant.color }}"></div>
+                                <div class="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300">
+                                </div>
+                            </label>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </fieldset>
+        </div>
+    {% endif %}
+    <!-- Sizes -->
+    {% if product.variants.all %}
+        <div class="p-6 glass-effect rounded-xl">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-luxe-charcoal">Size</h3>
+                <a href="#"
+                   class="text-luxe-gold hover:text-yellow-600 font-medium transition-colors duration-300">Size Guide →</a>
+            </div>
+            <fieldset>
+                <div class="grid grid-cols-3 gap-3 sm:grid-cols-4">
+                    {% for variant in product.variants.all %}
+                        {% if variant.size %}
+                            <label class="group relative border-2 border-gray-200 rounded-lg py-4 px-4 flex items-center justify-center text-sm font-semibold uppercase hover:border-luxe-gold focus:outline-none transition-all duration-300 cursor-pointer {% if not variant.is_available %}opacity-50{% endif %}">
+                                <input type="radio"
+                                       name="size-choice"
+                                       value="{{ variant.size }}"
+                                       data-color="{{ variant.color }}"
+                                       data-size="{{ variant.size }}"
+                                       data-variant-id="{{ variant.id }}"
+                                       class="sr-only size-input"
+                                       {% if not variant.is_available %}disabled{% endif %}>
+                                <span class="group-hover:text-luxe-gold transition-colors duration-300">{{ variant.size }}</span>
+                                {% if not variant.is_available %}
+                                    <span class="absolute inset-0 flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-red-400"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </span>
+                                {% endif %}
+                            </label>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </fieldset>
+        </div>
+    {% endif %}
+    <!-- Add to Bag Button -->
+    <div class="space-y-4">
+        {% if request.customer %}
+            <button type="submit"
+                    class="w-full gradient-gold text-white py-4 px-8 rounded-xl font-bold text-lg tracking-wide hover:shadow-2xl transform hover:scale-105 transition-all duration-300 animate-scale-in">
+                Add to Collection
+            </button>
+        {% else %}
+            <button disabled
+                    class="w-full bg-gray-600 text-white py-4 px-8 rounded-xl font-bold text-lg tracking-wide transition-all duration-300  disabled:cursor-not-allowed">
+                Login to add to cart
+            </button>
+        {% endif %}
+    </div>
+</form>
+<!-- JavaScript to link color+size -> variant_id -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const colorInputs = document.querySelectorAll('.color-input');
+        const sizeInputs = document.querySelectorAll('.size-input');
+        const variantIdInput = document.getElementById('variant-id-input');
+        const form = document.querySelector('form');
+
+        let selectedColor = null;
+        let selectedSize = null;
+
+        function updateVariantId() {
+            if (!selectedColor || !selectedSize) {
+                variantIdInput.value = '';
+                return;
+            }
+
+            const matchedInput = Array.from(document.querySelectorAll('input[data-variant-id]')).find(input => {
+                return input.dataset.color === selectedColor && input.dataset.size === selectedSize;
+            });
+
+            if (matchedInput) {
+                variantIdInput.value = matchedInput.dataset.variantId;
+            } else {
+                variantIdInput.value = '';
+            }
+        }
+
+        colorInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                selectedColor = input.value;
+                updateVariantId();
+            });
+        });
+
+        sizeInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                selectedSize = input.value;
+                updateVariantId();
+            });
+        });
+
+        form.addEventListener('submit', function(e) {
+            if (!variantIdInput.value) {
+                e.preventDefault();
+                alert("Please select a valid color and size combination.");
+            }
+        });
+    });
+</script>
