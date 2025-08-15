@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import QuerySet, Sum
+from django.utils import timezone
 from django.utils.text import slugify
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -20,10 +21,12 @@ User = get_user_model()
 class ChatMessage(BaseModel):
     incomming_message = models.CharField()
     outgoing_message = models.CharField()
-    explanation = models.CharField(null=True,blank=True)
+    explanation = models.CharField(null=True, blank=True)
 
 
 class CustomerEvent(models.Model):
+    addresses = QuerySet["Address"]
+
     customer = models.ForeignKey(
         "Customer",
         on_delete=models.SET_NULL,
@@ -55,6 +58,7 @@ class Customer(BaseModel):
     password = models.CharField(verbose_name="Password")
     is_verified = models.BooleanField(default=False)
     marketing_opt_in = models.BooleanField(verbose_name="User's marketing preferene")
+    block = models.BooleanField(default=False)
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
@@ -289,6 +293,13 @@ class Product(BaseModel):
         if fallback_image and fallback_image.image:
             return fallback_image.image.url
         return None
+
+    @property
+    def in_stock(self):
+        return ProductVariant.objects.filter(
+            product=self,
+            stock_quantity__gt=0,
+        ).exists()
 
 
 class ProductImage(BaseModel):
@@ -869,6 +880,23 @@ class BlogPost(BaseModel):
 
     def __str__(self):
         return self.title
+
+
+class MarketingEmail(BaseModel):
+    subject = models.CharField(max_length=255)
+    body = models.TextField()
+    sent_at = models.DateTimeField(null=True, blank=True)
+    recipients = models.ManyToManyField(
+        "Customer", related_name="marketing_emails", blank=True
+    )
+
+    def send_email(self):
+        # Example function to send email to all linked customers
+        for customer in self.recipients.all():
+            # send email to customer.email
+            pass
+        self.sent_at = timezone.now()
+        self.save()
 
 
 # ===========================================================================

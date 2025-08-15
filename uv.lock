@@ -411,6 +411,19 @@ wheels = [
 ]
 
 [[package]]
+name = "django-debug-toolbar"
+version = "6.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "sqlparse" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c5/d5/5fc90234532088aeec5faa48d5b09951cc7eab6626030ed427d3bd8cd9bc/django_debug_toolbar-6.0.0.tar.gz", hash = "sha256:6eb9fa6f4a5884bf04004700ffb5a44043f1fff38784447fc52c1633448c8c14", size = 305331 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/05/b5/4724a8c18fcc5b09dca7b7a0e70c34208317bb110075ad12484d6588ae91/django_debug_toolbar-6.0.0-py3-none-any.whl", hash = "sha256:0cf2cac5c307b77d6e143c914e5c6592df53ffe34642d93929e5ef095ae56841", size = 266967 },
+]
+
+[[package]]
 name = "django-esewa"
 version = "1.0.9"
 source = { registry = "https://pypi.org/simple" }
@@ -1117,6 +1130,7 @@ dependencies = [
     { name = "django-celery-beat" },
     { name = "django-celery-results" },
     { name = "django-cotton" },
+    { name = "django-debug-toolbar" },
     { name = "django-esewa" },
     { name = "django-extensions" },
     { name = "django-htmx" },
@@ -1164,6 +1178,7 @@ requires-dist = [
     { name = "django-celery-beat", specifier = ">=2.8.1" },
     { name = "django-celery-results", specifier = ">=2.6.0" },
     { name = "django-cotton", specifier = ">=2.1.3" },
+    { name = "django-debug-toolbar", specifier = ">=6.0.0" },
     { name = "django-esewa", specifier = ">=1.0.9" },
     { name = "django-extensions", specifier = ">=4.1" },
     { name = "django-htmx", specifier = ">=1.23.2" },

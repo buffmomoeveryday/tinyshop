@@ -79,14 +79,16 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
 
+
   tinyshop-email:
     image: axllent/mailpit
+    container_name: tinyshop_mailpit
     restart: unless-stopped
     volumes:
       - tinyshop_mailpit:/data
     ports:
       - "8025:8025" # Web UI
-      - "1025:1025" # SMTP
+      - "${EMAIL_PORT}:${EMAIL_PORT}" # SMTP
     environment:
       - MP_MAX_MESSAGES=5000
       - MP_DATABASE=/data/mailpit.db
@@ -94,6 +96,8 @@ services:
       - MP_SMTP_AUTH_ALLOW_INSECURE=1
     networks:
       - tinyshop-network
+
+
 
 volumes:
   tinyshop_pg_data:

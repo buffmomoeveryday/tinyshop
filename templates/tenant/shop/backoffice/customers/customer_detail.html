@@ -1,0 +1,133 @@
+{% extends "backoffice_base.html" %}
+{% block content %}
+    <div class="p-6 space-y-8">
+        <!-- Profile -->
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">Customer Profile</h2>
+                <p>
+                    <span class="font-bold">Name:</span> {{ customer.get_full_name }}
+                </p>
+                <p>
+                    <span class="font-bold">Email:</span> {{ customer.email }}
+                </p>
+                <p>
+                    <span class="font-bold">Phone:</span> {{ customer.contact_number|default:"—" }}
+                </p>
+                <p>
+                    <span class="font-bold">Verified:</span>
+                    {% if customer.is_verified %}
+                        <span class="badge badge-success">Yes</span>
+                    {% else %}
+                        <span class="badge badge-error">No</span>
+                    {% endif %}
+                </p>
+                <p>
+                    <span class="font-bold">Marketing Opt-in:</span>
+                    {% if customer.marketing_opt_in %}
+                        <span class="badge badge-info">Yes</span>
+                    {% else %}
+                        <span class="badge">No</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        <!-- Orders Summary -->
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">Orders Summary</h2>
+                <div class="flex gap-6 mb-4">
+                    <div>
+                        <span class="text-lg font-bold">{{ total_orders }}</span>
+                        <p class="text-sm text-gray-500">Total Orders</p>
+                    </div>
+                    <div>
+                        <span class="text-lg font-bold">${{ total_spent }}</span>
+                        <p class="text-sm text-gray-500">Total Spent</p>
+                    </div>
+                </div>
+                <h3 class="font-semibold mt-4">Recent Orders</h3>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                                <tr>
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.order_date|date:"Y-m-d" }}</td>
+                                    <td>
+                                        <span class="badge badge-outline">{{ order.status }}</span>
+                                    </td>
+                                    <td>${{ order.total_amount }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No orders yet.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Addresses -->
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">Addresses</h2>
+                {% for addr in addresses %}
+                    <div class="border-b pb-2 mb-2">
+                        <p class="font-bold">{{ addr.get_address_type_display }}</p>
+                        <p>{{ addr.full_name }} – {{ addr.phone_number|default:"—" }}</p>
+                        <p>
+                            {{ addr.address_line1 }}
+                            {% if addr.address_line2 %}, {{ addr.address_line2 }}{% endif %}
+                        </p>
+                        <p>{{ addr.city }}, {{ addr.state }}, {{ addr.postal_code }}, {{ addr.country }}</p>
+                        {% if addr.is_default %}<span class="badge badge-success badge-sm">Default</span>{% endif %}
+                    </div>
+                {% empty %}
+                    <p>No addresses found.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Recent Activity -->
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">Recent Activity</h2>
+                <div class="overflow-x-auto">
+                    <table class="table table-compact w-full">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Event</th>
+                                <th>Path</th>
+                                <th>IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in recent_events %}
+                                <tr>
+                                    <td>{{ event.created_at|date:"Y-m-d H:i" }}</td>
+                                    <td>{{ event.event_type }}</td>
+                                    <td>{{ event.path|default:"—" }}</td>
+                                    <td>{{ event.ip_address|default:"—" }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No activity recorded.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -17,8 +17,8 @@
                 {% endif %}
             </div>
             <div class="card-actions justify-end mt-4">
-                <button class="btn btn-sm btn-outline">Edit</button>
                 <a class="btn btn-sm btn-primary"
+                   hx-boost="true"
                    href="{% url 'backoffice:product-detail-tenant' product.id %}">View</a>
             </div>
         </div>

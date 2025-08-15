@@ -3,12 +3,11 @@
 import json
 import logging
 from datetime import date, timedelta
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 
 import stripe
 from django.conf import settings as djsettings
 from django.contrib import messages
-from django.contrib.auth import logout
 from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Count, F, Q, Sum
@@ -27,6 +26,7 @@ from core.enums import StripeEvents
 from shop.models import (
     Address,
     Cart,
+    ChatMessage,
     Customer,
     Order,
     OrderItem,
@@ -39,22 +39,6 @@ from tenant.models import ShopTemplate, Tenant
 logger = logging.getLogger(__name__)
 
 
-##################
-# Authentication
-##################
-def login_tenant(request: HttpRequest):
-    return render(request=request, template_name="backoffice/login.html")
-
-
-def logout_user(request: HttpRequest):
-    logout(request=request)
-    print("user-logout")
-    return redirect(reverse("login-tenant"))
-
-
-##################
-# Authentication
-##################
 @tenant_login_required
 def dashboard(request):
     # === Basic Stats ===
@@ -177,7 +161,8 @@ def orders(request: HttpRequest):
         if search_query:
             qs = qs.filter(
                 Q(pk__icontains=search_query)
-                | Q(customer__username__icontains=search_query)
+                | Q(customer__first_name__icontains=search_query)
+                | Q(customer__last_name__icontains=search_query)
                 | Q(customer__email__icontains=search_query)
             )
 
@@ -252,10 +237,8 @@ def orders(request: HttpRequest):
 
 @tenant_login_required
 def customers(request: HttpRequest):
-    # All customers
     customer_qs = Customer.objects.all()
 
-    # Calculate stats
     total_customers = customer_qs.count()
     start_of_month = timezone.now().replace(day=1)
     new_customers_count = customer_qs.filter(created_at__gte=start_of_month).count()
@@ -286,7 +269,6 @@ def payment_for_extended(request):
 @tenant_login_required
 def subscription_payment(request):
     stripe.api_key = djsettings.STRIPE_SECRET_KEY
-    print(request.tenant.id)
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         line_items=[
@@ -582,11 +564,7 @@ def get_online_browser_count(request):
 ############
 # ai
 ############
-from shop.models import ChatMessage
-
-
 def chat_with_database(request):
-    headers = request.headers.get("Action")
     from shop.sql_utils import process_nl_query_for_tenant
 
     messages = ChatMessage.objects.all()

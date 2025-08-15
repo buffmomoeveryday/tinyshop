@@ -1,8 +1,6 @@
-{% load unicorn %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en" data-theme="night">
-    {% unicorn_scripts %}
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,33 +17,8 @@
                 Dashboard
             {% endblock title %}
         </title>
-        <style>
-            [unicorn\:error\:invalid] {
-                border: 1px solid red !important;
-            }
-
-            [unicorn\:error\:required] {
-                border: 1px solid red !important;
-            }
-
-            /* Custom scrollbar for sidebar */
-            .sidebar-scroll::-webkit-scrollbar {
-                width: 4px;
-            }
-
-            .sidebar-scroll::-webkit-scrollbar-track {
-                background: transparent;
-            }
-
-            .sidebar-scroll::-webkit-scrollbar-thumb {
-                background: rgba(156, 163, 175, 0.5);
-                border-radius: 2px;
-            }
-
-            .sidebar-scroll::-webkit-scrollbar-thumb:hover {
-                background: rgba(156, 163, 175, 0.7);
-            }
-        </style>
+        {% block head %}
+        {% endblock head %}
     </head>
     <body hx-headers='{"x-csrftoken": "{{ csrf_token }}"}' class="bg-base-100">
         <div class="drawer lg:drawer-open">
@@ -94,64 +67,10 @@
                     {% endblock content %}
                 </main>
             </div>
-            {% include "backoffice_sidebar.html" %}
+            {% include "backoffice/components/shared/backoffice_sidebar.html" %}
         </div>
         {% include "toasts.html" %}
     </body>
+    {% block script %}
+    {% endblock script %}
 </html>
-<script>
-    const themes = [
-        'light', 'dark', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'synthwave', 'retro',
-        'cyberpunk', 'valentine', 'halloween', 'garden', 'forest', 'aqua', 'lofi', 'pastel',
-        'fantasy', 'wireframe', 'black', 'luxury', 'dracula', 'cmyk', 'autumn', 'business',
-        'acid', 'lemonade', 'night', 'coffee', 'winter', 'dim', 'nord', 'sunset'
-    ];
-
-    // Load saved theme or default to light
-    function loadTheme() {
-        const savedTheme = localStorage.getItem('selected-theme') || 'light';
-        const html = document.documentElement;
-        html.setAttribute('data-theme', savedTheme);
-
-        // Update the display text
-        updateCurrentThemeDisplay(savedTheme);
-    }
-
-    // Change theme function
-    function changeTheme(theme) {
-        const html = document.documentElement;
-        html.setAttribute('data-theme', theme);
-        localStorage.setItem('selected-theme', theme);
-        updateCurrentThemeDisplay(theme);
-
-        // Close dropdown
-        const dropdown = document.querySelector('.dropdown');
-        if (dropdown) {
-            dropdown.removeAttribute('open');
-            dropdown.blur();
-        }
-    }
-
-    // Update the current theme display
-    function updateCurrentThemeDisplay(theme) {
-        const currentThemeSpan = document.getElementById('current-theme');
-        if (currentThemeSpan) {
-            currentThemeSpan.textContent = theme.charAt(0).toUpperCase() + theme.slice(1);
-        }
-    }
-
-    // Initialize theme on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        loadTheme();
-    });
-
-    // Handle dropdown behavior
-    document.addEventListener('click', function(e) {
-        const dropdown = document.querySelector('.dropdown');
-        const dropdownContent = document.querySelector('.dropdown-content');
-
-        if (dropdown && !dropdown.contains(e.target)) {
-            dropdown.removeAttribute('open');
-        }
-    });
-</script>

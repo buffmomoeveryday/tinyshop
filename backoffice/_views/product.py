@@ -12,13 +12,15 @@ logger = logging.getLogger(__name__)
 
 
 @tenant_login_required
-def products(request: HttpRequest):
-    products = Product.objects.select_related("product_category").all()
-    context = {"products": products}
+def products_view(request: HttpRequest):
+    products = Product.objects.select_related("category").all()
     return render(
         request=request,
-        template_name="backoffice/products.html",
-        context=context,
+        template_name="backoffice/products/products.html",
+        context={
+            "products": products,
+            "categories": ProductCategory.objects.all(),
+        },
     )
 
 
@@ -41,6 +43,7 @@ def product_detail(request, product_id):
 
     if request.method == "POST":
         action = request.POST.get("action")
+
         if action == "add_variant":
             variant_data = {
                 "product": product,
@@ -110,7 +113,6 @@ def product_detail(request, product_id):
             except Exception as e:
                 messages.error(request, f"Error removing variant: {str(e)}")
 
-        # Redirect to avoid re-submission on refresh
         return redirect("product_detail", product_id=product_id)
 
 
@@ -162,7 +164,7 @@ def products_add(request):
 
     return render(
         request=request,
-        template_name="backoffice/products/productadd.html",
+        template_name="backoffice/products/product_add.html",
         context=context,
     )
 

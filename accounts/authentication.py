@@ -17,7 +17,7 @@ class CustomerBackend(BaseBackend):
             return None
 
         try:
-            customer = Customer.objects.get(email=email)
+            customer = Customer.objects.get(email=email, blocked=False)
         except Customer.DoesNotExist:
             return None
 

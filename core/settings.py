@@ -33,7 +33,6 @@ SHARED_APPS = [
     "tenant",
     "landing",
     "accounts",
-    # "template_partials",
     # third party
     "django_tenants",
     "whitenoise",
@@ -43,8 +42,6 @@ SHARED_APPS = [
     "django_pony_express",
     "phonenumber_field",
     "django_extensions",
-    # "django_cotton",
-    "django_cotton.apps.SimpleAppConfig",
     # django's inbuilt
     "django.contrib.staticfiles",
     "django.contrib.admin",
@@ -77,6 +74,11 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx_messages.middleware.HtmxMessageMiddleware",
+]
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
 ]
 
 

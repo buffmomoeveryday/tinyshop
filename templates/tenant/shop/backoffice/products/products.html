@@ -1,27 +1,48 @@
 {% extends "backoffice_base.html" %}
 {% block content %}
-    <div id="products" class="template-section" u:view>
+    <div id="products" class="template-section">
         {% if request.tenant.trial_expire %}
             <div class="alert alert-error shadow-lg mt-8 mx-4">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     class="lucide lucide-alert-circle w-6 h-6"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor"
+                     stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
                 <span>Your trial has expired. Please upgrade to continue managing products.</span>
             </div>
         {% else %}
-            <div class="container mx-auto px-4 py-6">
+            <div class="container mx-auto px-4 py-8">
                 <!-- Header -->
-                <div class="flex justify-between items-center mb-8">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                     <div>
                         <h1 class="text-3xl font-bold">Products</h1>
                         <p class="text-base-content/70">Manage your product catalog</p>
                     </div>
-                    <a href="{% url 'backoffice:product-add-tenant' %}"
-                       class="btn btn-primary">
-                        <i class="fas fa-plus mr-2"></i>Add Product
+                    <a hx-boost="true"
+                       href="{% url 'backoffice:product-add-tenant' %}"
+                       class="btn btn-primary gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="lucide lucide-plus w-5 h-5"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor"
+                             stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        Add Product
                     </a>
                 </div>
                 <!-- Filters -->
                 <div class="card bg-base-100 shadow mb-6">
                     <div class="card-body">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- Search -->
                             <div class="form-control">
                                 <label class="label">
                                     <span class="label-text">Search</span>
@@ -32,15 +53,17 @@
                                        placeholder="Search products..."
                                        class="input input-bordered w-full" />
                             </div>
+                            <!-- Category -->
                             <div class="form-control">
                                 <label class="label">
                                     <span class="label-text">Category</span>
                                 </label>
-                                <select>
+                                <select class="select select-bordered w-full">
                                     <option disabled selected>All Categories</option>
                                     {% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}
                                 </select>
                             </div>
+                            <!-- Status -->
                             <div class="form-control">
                                 <label class="label">
                                     <span class="label-text">Status</span>
@@ -53,6 +76,7 @@
                                     <option value="false">Disabled</option>
                                 </select>
                             </div>
+                            <!-- Sort -->
                             <div class="form-control">
                                 <label class="label">
                                     <span class="label-text">Sort By</span>
@@ -71,20 +95,8 @@
                 </div>
                 <!-- Products Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {% include 'backoffice/components/product_list.html' with products=products %}
+                    {% include 'backoffice/products/product_list.html' with products=products %}
                 </div>
-                <!-- Pagination -->
-                {% if products %}
-                    <div class="flex justify-center mt-10">
-                        <div class="join">
-                            <button class="join-item btn">«</button>
-                            <button class="join-item btn btn-active">1</button>
-                            <button class="join-item btn">2</button>
-                            <button class="join-item btn">3</button>
-                            <button class="join-item btn">»</button>
-                        </div>
-                    </div>
-                {% endif %}
             </div>
         {% endif %}
     </div>

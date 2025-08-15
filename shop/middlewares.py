@@ -37,7 +37,7 @@ class CustomerActivityMiddleware:
             now = time.time()
             last_visit = request.session.get("last_visit_timestamp")
 
-            if last_visit and request.user.is_authenticated:
+            if last_visit and request.customer:
                 session_gap = now - last_visit
                 if 0 < session_gap < 1800:
                     log_customer_event(

@@ -1,12 +1,9 @@
 import logging
-import os
 import re
-from functools import lru_cache
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Union
 
 from django.apps import apps
 from django.db import OperationalError, ProgrammingError, connection
-from django_tenants.utils import get_tenant_model
 from openai import OpenAI
 
 from core import settings
@@ -15,7 +12,7 @@ from core import settings
 # Configuration
 # ---------------------------
 REPO_MODEL = "deepseek-chat"
-DEEPSEEK_API_KEY = settings.DEEPSEEK_API_KEY
+DEEPSEEK_API_KEY: str = settings.DEEPSEEK_API_KEY  # type:ignore
 
 # Initialize DeepSeek client
 client = OpenAI(
@@ -39,11 +36,9 @@ def get_cached_schema() -> Dict[str, List[str]]:
 
         for field in model._meta.get_fields():
             if hasattr(field, "column"):
-                # Include the actual column name
-                fields.append(field.column)
-                # For foreign keys, include both the ID field and the relationship
+                fields.append(field.column)  # type:ignore
                 if field.is_relation and hasattr(field, "attname"):
-                    fields.append(field.attname)  # This will be customer_id
+                    fields.append(field.attname)  # type:ignore
 
         schema[table_name] = fields
     return schema
@@ -163,7 +158,7 @@ def is_valid_query(query: str) -> bool:
 # ---------------------------
 # LLM Interaction
 # ---------------------------
-def generate_llm_response(prompt: str) -> str:
+def generate_llm_response(prompt: str) -> str | None:
     """Generate a response from the LLM (DeepSeek)."""
     response = client.chat.completions.create(
         model=REPO_MODEL,
@@ -175,7 +170,9 @@ def generate_llm_response(prompt: str) -> str:
 # ---------------------------
 # Explain SQL Results
 # ---------------------------
-def explain_result(nl_query: str, sql_query: str, results: List[Dict[str, Any]]) -> str:
+def explain_result(
+    nl_query: str, sql_query: str, results: List[Dict[str, Any]]
+) -> str | None:
     """Explain the SQL results in plain language."""
     results_str = "\n".join(str(r) for r in results) if results else "No results found"
     prompt_template = f"""
@@ -190,7 +187,8 @@ def explain_result(nl_query: str, sql_query: str, results: List[Dict[str, Any]])
         SQL Results: {results_str}
         Explanation:
     """
-    return generate_llm_response(prompt_template)
+    if prompt_template:
+        return generate_llm_response(prompt_template)
 
 
 # ---------------------------

@@ -1,0 +1,36 @@
+{% extends "backoffice_base.html" %}
+{% block content %}
+    <div class="min-h-screen flex items-center justify-center bg-base-200">
+        <div class="w-full max-w-md p-8 space-y-6 bg-base-100 rounded-2xl shadow-xl">
+            <h2 class="text-2xl font-bold text-center text-primary">Login</h2>
+            <form action="." method='post'>
+                {% csrf_token %}
+                <div class="form-control">
+                    <label for="username" class="label">
+                        <span class="label-text">Username</span>
+                    </label>
+                    <input class="input input-bordered w-full"
+                           type="text"
+                           id="username"
+                           name="username"
+                           u:model.defer="username"
+                           placeholder="Enter your username" />
+                </div>
+                <div class="form-control">
+                    <label for="password" class="label">
+                        <span class="label-text">Password</span>
+                    </label>
+                    <input class="input input-bordered w-full"
+                           type="password"
+                           id="password"
+                           name="password"
+                           u:model.defer="password"
+                           placeholder="Enter your password" />
+                </div>
+                <button class="btn btn-success w-full" type="submit">
+                    <span u:loading.remove id="button-text">Login In</span>
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

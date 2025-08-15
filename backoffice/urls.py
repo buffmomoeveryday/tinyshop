@@ -1,13 +1,10 @@
 # type:ignore
 from django.urls import path
 
-from backoffice.components.customer_detail import CustomerDetailView
-from backoffice.components.customers import CustomersView
-from backoffice.components.login import LoginView
-from backoffice.components.product import ProductView
+from backoffice._views.marketing import marketing_email, marketing_email_create
 
 from . import views
-from ._views import product, reports
+from ._views import auth, customers, product, reports
 
 # from backoffice.components.product_detail import ProductDetailView
 # from backoffice.components.productadd import ProductaddView
@@ -17,15 +14,15 @@ from ._views import product, reports
 app_name = "backoffice"  # noqa: F811
 
 urlpatterns = [
-    path("login/", LoginView.as_view(), name="login-tenant"),
-    path("logout/", views.logout_user, name="logout-tenant"),
+    path("login/", auth.login_tenant, name="login-tenant"),
+    path("logout/", auth.logout_tenant, name="logout-tenant"),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("chat/", views.chat_with_database, name="chat-with-database"),
     path("orders/", views.orders, name="orders-tenant"),
-    path("customers/", CustomersView.as_view(), name="customers-tenant"),
+    path("customers/", customers.customers_view, name="customers-tenant"),
     path(
-        "customers/<int:id>/",
-        CustomerDetailView.as_view(),
+        "customers/<int:customer_id>/",
+        customers.customer_detail_view,
         name="customers-details-tenant",
     ),
     path("settings/", views.tenant_settings, name="settings-tenant"),
@@ -33,7 +30,11 @@ urlpatterns = [
 
 
 product_urls = [
-    path("products/add", product.products_add, name="product-add-tenant"),
+    path(
+        "products/add",
+        product.products_add,
+        name="product-add-tenant",
+    ),
     path(
         "product/<int:product_id>/detail",
         product.product_detail,
@@ -41,7 +42,7 @@ product_urls = [
     ),
     path(
         "products/",
-        ProductView.as_view(),
+        product.products_view,
         name="products-tenant",
     ),
     path(
@@ -100,12 +101,29 @@ heartbeat = [
 ]
 
 
+customer = [
+    path(
+        "htmx/customer/block/<int:customer_id>",
+        customers.htmx_customer_block,
+        name="htmx-customer-block",
+    )
+]
+
 reports = [
     path("reports/", reports.reports, name="reports"),
     path("reports/api/", reports.reports_api, name="reports_api"),
 ]
 
+
+marketing = [
+    path("marketing/", marketing_email, name="marketing-email"),
+    path("marketing/create/", marketing_email_create, name="marketing-email-create"),
+]
+
+
 urlpatterns += product_urls
 urlpatterns += payment_urls
 urlpatterns += heartbeat
 urlpatterns += reports
+urlpatterns += customer
+urlpatterns += marketing

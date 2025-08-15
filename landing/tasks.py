@@ -57,4 +57,3 @@ def send_welcome_email(tenant: Tenant, employee: Employee):
     )
     msg.attach_alternative(html_content, "text/html")
     msg.send()
-    msg.send()

@@ -1,15 +1,12 @@
 {% extends "backoffice_base.html" %}
 {% block content %}
-    <div u:view id="customers" class="template-section">
+    <div id="customers" class="template-section">
         <div class="container mx-auto p-6">
             <div class="flex justify-between items-center mb-8">
                 <div>
                     <h1 class="text-3xl font-bold mb-2">Customers</h1>
                     <p class="text-base-content/70">Manage your customer base</p>
                 </div>
-                <button class="btn btn-primary">
-                    <i class="fas fa-user-plus mr-2"></i>Add Customer
-                </button>
             </div>
             <!-- Customer Stats -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -17,13 +14,12 @@
                     <div class="stat">
                         <div class="stat-title">Total Customers</div>
                         <div class="stat-value text-primary">{{ total_customers }}</div>
-                        <div class="stat-desc">+12% this month</div>
                     </div>
                 </div>
                 <div class="stats shadow">
                     <div class="stat">
                         <div class="stat-title">Active Customers</div>
-                        <div class="stat-value text-secondary">{{ active_customers }}</div>
+                        <div class="stat-value text-secondary">{{ active_customers_count }}</div>
                         <div class="stat-desc">Purchased in last 30 days</div>
                     </div>
                 </div>
@@ -31,7 +27,6 @@
                     <div class="stat">
                         <div class="stat-title">New This Month</div>
                         <div class="stat-value text-accent">{{ new_customers_this_month }}</div>
-                        <div class="stat-desc">+24% from last month</div>
                     </div>
                 </div>
             </div>
@@ -49,7 +44,6 @@
                                 <option>All</option>
                                 <option>Active</option>
                                 <option>Inactive</option>
-                                <option>VIP</option>
                             </select>
                         </div>
                     </div>
@@ -64,30 +58,18 @@
                                     <th>Status</th>
                                     <th>Join Date</th>
                                     <th>Actions</th>
+                                    <th>Block</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for customer in customers %}
                                     <tr>
-                                        <td>
-                                            <div class="flex items-center space-x-3">
-                                                <div class="avatar">
-                                                    <div class="mask mask-squircle w-12 h-12">
-                                                        <img src="https://via.placeholder.com/48x48/8b5cf6/ffffff?text={{ customer.first_name|slice:":1" }}"
-                                                             alt="Avatar" />
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="font-bold">{{ customer.first_name }} {{ customer.last_name }}</div>
-                                                    <div class="text-sm opacity-50">ID: #CUST-{{ customer.id }}</div>
-                                                </div>
-                                            </div>
-                                        </td>
+                                        <td class="font-bold">{{ customer.first_name |capfirst }} {{ customer.last_name|capfirst }}</td>
                                         <td>{{ customer.email }}</td>
                                         <td>{{ customer.get_total_orders }}</td>
-                                        <td class="font-bold">{{ customer.get_total }}</td>
+                                        <td>{{ customer.get_total }}</td>
                                         <td>
-                                            {% if customer.get_total > 500 %}
+                                            {% if customer.get_total > 10000 %}
                                                 <span class="badge badge-success">VIP</span>
                                             {% elif customer.get_total_orders > 0 %}
                                                 <span class="badge badge-primary">Active</span>
@@ -97,26 +79,19 @@
                                         </td>
                                         <td>{{ customer.created_at|date:"Y-m-d" }}</td>
                                         <td>
-                                            <div class="dropdown dropdown-end">
-                                                <div tabindex="0" role="button" class="btn btn-ghost btn-xs">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </div>
-                                                <ul tabindex="0"
-                                                    class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-                                                    <li>
-                                                        <a>View Profile</a>
-                                                    </li>
-                                                    <li>
-                                                        <a>View Orders</a>
-                                                    </li>
-                                                    <li>
-                                                        <a>Send Message</a>
-                                                    </li>
-                                                    <li>
-                                                        <a>Edit Customer</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
+                                            <a href="{% url 'backoffice:customers-details-tenant' customer.id %}"
+                                               class="btn btn-sm btn-primary text-white">View</a>
+                                        </td>
+                                        <td>
+                                            <button hx-confirm="Are you sure you want to {% if customer.block %}unblock{% else %}block{% endif %} {{ customer.first_name|capfirst }} {{ customer.last_name|capfirst }}?"
+                                                    hx-post="{% url 'backoffice:htmx-customer-block' customer.id %}"
+                                                    class="btn btn-sm {% if customer.block %}btn-success{% else %}btn-error{% endif %} text-white">
+                                                {% if customer.block %}
+                                                    <i class="fas fa-unlock mr-1"></i> Unblock
+                                                {% else %}
+                                                    <i class="fas fa-ban mr-1"></i> Block
+                                                {% endif %}
+                                            </button>
                                         </td>
                                     </tr>
                                 {% empty %}
